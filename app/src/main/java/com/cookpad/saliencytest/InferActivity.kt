@@ -5,18 +5,17 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_infer.*
 import org.tensorflow.lite.Interpreter
 import kotlin.math.exp
 import kotlin.math.ln
 
 
-class MainActivity : AppCompatActivity() {
-
+class InferActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_infer)
 
         val bitmap = (original.drawable as BitmapDrawable).bitmap
         val newWidth = (240f / bitmap.height) * bitmap.width
@@ -47,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         val input = arrayOf(arrayOf(red.toTypedArray(), green.toTypedArray(), blue.toTypedArray()))
         val output = arrayOf(arrayOf(Array(scaledBitmap.height / 8) { FloatArray(scaledBitmap.width / 8) }))
 
-        Interpreter(loadModelFile(this, "saliency.tflite"), Interpreter.Options())
+        Interpreter(Utils.loadModelFile(this, "saliency.tflite"), Interpreter.Options())
             .run(input, output)
 
         val flattenOutput = output.flatten().flatMap { it.flatMap { it.map { it } } }
@@ -79,5 +78,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         print(output)
+    }
+
+
+    private fun predic() {
+
     }
 }
