@@ -6,23 +6,16 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import org.tensorflow.contrib.android.TensorFlowInferenceInterface
-import kotlin.math.exp
-import kotlin.math.ln
+import org.tensorflow.lite.Interpreter
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val inferenceInterface by lazy { TensorFlowInferenceInterface(assets, "file:///android_asset/saliency.pb") }
+    private val tflite by lazy { Interpreter(loadModelFile(this, "saliency_v2.tflite"), Interpreter.Options()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        /*val input = mutableListOf<Float>()
-        for (i in 0 until 230400) {
-            input.add(0f)
-        }*/
 
         val bitmap = (original.drawable as BitmapDrawable).bitmap
         val newWidth = (240f / bitmap.height) * bitmap.width
@@ -30,20 +23,64 @@ class MainActivity : AppCompatActivity() {
         val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
         scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
-        val input = mutableListOf<Float>()
-        pixels.forEach { input.add(Color.red(it) / 255f) }
-        pixels.forEach { input.add(Color.green(it) / 255f) }
-        pixels.forEach { input.add(Color.blue(it) / 255f) }
+        val red = mutableListOf<MutableList<Float>>()
+        val green = mutableListOf<MutableList<Float>>()
+        val blue = mutableListOf<MutableList<Float>>()
+        for (i in 0 until scaledBitmap.height) {
+            val row = mutableListOf<Float>()
+            for (j in 0 until scaledBitmap.width) {
+                val pixel = pixels[j + i * scaledBitmap.width]
+                row.add(
+                    Color.red(pixel) / 255f
+                )
+            }
+            red.add(row)
+        }
+        for (i in 0 until scaledBitmap.height) {
+            val row = mutableListOf<Float>()
+            for (j in 0 until scaledBitmap.width) {
+                val pixel = pixels[j + i * scaledBitmap.width]
+                row.add(
+                    Color.green(pixel) / 255f
+                )
+            }
+            green.add(row)
+        }
+        for (i in 0 until scaledBitmap.height) {
+            val row = mutableListOf<Float>()
+            for (j in 0 until scaledBitmap.width) {
+                val pixel = pixels[j + i * scaledBitmap.width]
+                row.add(
+                    Color.blue(pixel) / 255f
+                )
+            }
+            blue.add(row)
+        }
 
-        inferenceInterface.feed(
+        val input_array = arrayOf(
+            arrayOf(
+                red.map { it.toTypedArray() }.toTypedArray(),
+                green.map { it.toTypedArray() }.toTypedArray(),
+                blue.map { it.toTypedArray() }.toTypedArray()
+            )
+        )
+        //pixels.forEach { input.add(Color.red(it) / 255f) }
+        //pixels.forEach { input.add(Color.green(it) / 255f) }
+        //pixels.forEach { input.add(Color.blue(it) / 255f) }
+
+        var output =
+            arrayOf(Array(scaledBitmap.height / 8) { FloatArray(scaledBitmap.width / 8) })  //FloatArray(1, scaledBitmap.height / 8, scaledBitmap.width / 8)
+        tflite.run(input_array, output)
+
+        /*inferenceInterface.feed(
             "0", input.toFloatArray(), 1, 3,
             scaledBitmap.height.toLong(), scaledBitmap.width.toLong()
         )
 
-        var output = FloatArray(scaledBitmap.height * scaledBitmap.width / 64)
         inferenceInterface.run(arrayOf("Sigmoid"))
-        inferenceInterface.fetch("Sigmoid", output)
+        inferenceInterface.fetch("Sigmoid", output)*/
 
+        /*
         val temperature = 0.25f
         output = output.map { ln(it.toDouble()).toFloat() / temperature }.toFloatArray()
         output = output.map { exp(it.toDouble()).toFloat() }.toFloatArray()
@@ -69,5 +106,6 @@ class MainActivity : AppCompatActivity() {
         heatmap.setImageBitmap(newBitmap)
 
         print(output)
+        */
     }
 }
