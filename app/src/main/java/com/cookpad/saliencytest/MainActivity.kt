@@ -13,7 +13,6 @@ import kotlin.math.ln
 
 class MainActivity : AppCompatActivity() {
 
-    private val tflite by lazy { Interpreter(loadModelFile(this, "saliency.tflite"), Interpreter.Options()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,75 +29,54 @@ class MainActivity : AppCompatActivity() {
         val blue = mutableListOf<FloatArray>()
 
         for (i in 0 until scaledBitmap.height) {
-            val row = FloatArray(scaledBitmap.width)
+            val row_red = FloatArray(scaledBitmap.width)
+            val row_green = FloatArray(scaledBitmap.width)
+            val row_blue = FloatArray(scaledBitmap.width)
+
             for (j in 0 until scaledBitmap.width) {
                 val pixel = pixels[j + i * scaledBitmap.width]
-                row[j] = Color.red(pixel) / 255f
-            }
-            red.add(row)
-        }
-        for (i in 0 until scaledBitmap.height) {
-            val row = FloatArray(scaledBitmap.width)
-            for (j in 0 until scaledBitmap.width) {
-                val pixel = pixels[j + i * scaledBitmap.width]
-                row[j] = Color.green(pixel) / 255f
+                row_red[j] = Color.red(pixel) / 255f
+                row_green[j] = Color.green(pixel) / 255f
             }
 
-            green.add(row)
-        }
-        for (i in 0 until scaledBitmap.height) {
-            val row = FloatArray(scaledBitmap.width)
-            for (j in 0 until scaledBitmap.width) {
-                val pixel = pixels[j + i * scaledBitmap.width]
-                row[j] = Color.blue(pixel) / 255f
-            }
-            blue.add(row)
+            red.add(row_red)
+            green.add(row_green)
+            blue.add(row_blue)
         }
 
-
-        val inputArray = arrayOf(
-            arrayOf(red.toTypedArray(), green.toTypedArray(), blue.toTypedArray())
-        )
-
+        val input = arrayOf(arrayOf(red.toTypedArray(), green.toTypedArray(), blue.toTypedArray()))
         val output = arrayOf(arrayOf(Array(scaledBitmap.height / 8) { FloatArray(scaledBitmap.width / 8) }))
 
-        tflite.run(inputArray, output)
+        Interpreter(loadModelFile(this, "saliency.tflite"), Interpreter.Options())
+            .run(input, output)
 
-        val flattenOutput = mutableListOf<Float>()
-        output.flatten().forEachIndexed { i, arrayOfArrays ->
-            arrayOfArrays.forEachIndexed { j, floats ->
-                floats.forEachIndexed { k, value ->
-                    flattenOutput.add(value)
-                }
-            }
-        }
+        val flattenOutput = output.flatten().flatMap { it.flatMap { it.map { it } } }
 
         val temperature = 0.25f
 
-        var a = flattenOutput
+        flattenOutput
             .map { ln(it.toDouble()).toFloat() / temperature }.toFloatArray()
             .map { exp(it.toDouble()).toFloat() }.toFloatArray()
+            .let { a -> a.map { it / a.sum() } }
+            .let { it.toFloatArray() }
+            .let { a -> a.map { 255 * it / (a.max() ?: 1f) } }
+            .let { it.toFloatArray() }
+            .let { a ->
+                val newBitmap = Bitmap
+                    .createBitmap(scaledBitmap.width / 8, scaledBitmap.height / 8, Bitmap.Config.ARGB_8888)
 
-        val sum = a.sum()
-        a = a.map { it / sum }.toFloatArray()
+                a.forEachIndexed { index, value ->
+                    val color = if (value > 0) {
+                        Color.rgb(value.toInt(), value.toInt(), value.toInt())
+                    } else {
+                        Color.rgb(0, 0, 0)
+                    }
+                    val (pos_x, pos_y) = index % 40 to index / 40
+                    newBitmap.setPixel(pos_x, pos_y, color)
+                }
 
-        val max = a.max() ?: 1f
-        a = a.map { 255 * it / max }.toFloatArray()
-
-        val newBitmap = Bitmap.createBitmap(
-            scaledBitmap.width / 8, scaledBitmap.height / 8, Bitmap.Config.ARGB_8888
-        )
-
-        a.forEachIndexed { index, value ->
-            val color = if (value > 0) {
-                Color.rgb(value.toInt(), value.toInt(), value.toInt())
-            } else Color.rgb(0, 0, 0)
-            val pos_x = index % 40
-            val pos_y = index / 40
-            newBitmap.setPixel(pos_x, pos_y, color)
-        }
-
-        heatmap.setImageBitmap(newBitmap)
+                heatmap.setImageBitmap(newBitmap)
+            }
 
         print(output)
     }
