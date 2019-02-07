@@ -13,7 +13,7 @@ import kotlin.math.ln
 
 class MainActivity : AppCompatActivity() {
 
-    private val tflite by lazy { Interpreter(loadModelFile(this, "saliency_v2.tflite"), Interpreter.Options()) }
+    private val tflite by lazy { Interpreter(loadModelFile(this, "saliency.tflite"), Interpreter.Options()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,12 +28,12 @@ class MainActivity : AppCompatActivity() {
         val red = mutableListOf<FloatArray>()
         val green = mutableListOf<FloatArray>()
         val blue = mutableListOf<FloatArray>()
-        
+
         for (i in 0 until scaledBitmap.height) {
             val row = FloatArray(scaledBitmap.width)
             for (j in 0 until scaledBitmap.width) {
                 val pixel = pixels[j + i * scaledBitmap.width]
-                row[i] = Color.red(pixel) / 255f
+                row[j] = Color.red(pixel) / 255f
             }
             red.add(row)
         }
@@ -41,10 +41,7 @@ class MainActivity : AppCompatActivity() {
             val row = FloatArray(scaledBitmap.width)
             for (j in 0 until scaledBitmap.width) {
                 val pixel = pixels[j + i * scaledBitmap.width]
-                row.set(
-                    i,
-                    Color.green(pixel) / 255f
-                )
+                row[j] = Color.green(pixel) / 255f
             }
 
             green.add(row)
@@ -53,22 +50,19 @@ class MainActivity : AppCompatActivity() {
             val row = FloatArray(scaledBitmap.width)
             for (j in 0 until scaledBitmap.width) {
                 val pixel = pixels[j + i * scaledBitmap.width]
-                row.set(
-                    i,
-                    Color.blue(pixel) / 255f
-                )
+                row[j] = Color.blue(pixel) / 255f
             }
             blue.add(row)
         }
 
 
-        val input_array = arrayOf(
+        val inputArray = arrayOf(
             arrayOf(red.toTypedArray(), green.toTypedArray(), blue.toTypedArray())
         )
 
         val output = arrayOf(arrayOf(Array(scaledBitmap.height / 8) { FloatArray(scaledBitmap.width / 8) }))
 
-        tflite.run(input_array, output)
+        tflite.run(inputArray, output)
 
         val flattenOutput = mutableListOf<Float>()
         output.flatten().forEachIndexed { i, arrayOfArrays ->
