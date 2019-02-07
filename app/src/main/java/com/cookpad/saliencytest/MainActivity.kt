@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         val red = mutableListOf<FloatArray>()
         val green = mutableListOf<FloatArray>()
         val blue = mutableListOf<FloatArray>()
+        
         for (i in 0 until scaledBitmap.height) {
             val row = FloatArray(scaledBitmap.width)
             for (j in 0 until scaledBitmap.width) {
@@ -64,24 +65,10 @@ class MainActivity : AppCompatActivity() {
         val input_array = arrayOf(
             arrayOf(red.toTypedArray(), green.toTypedArray(), blue.toTypedArray())
         )
-        //pixels.forEach { input.add(Color.red(it) / 255f) }
-        //pixels.forEach { input.add(Color.green(it) / 255f) }
-        //pixels.forEach { input.add(Color.blue(it) / 255f) }
 
-        var output =
-            arrayOf(arrayOf(Array(scaledBitmap.height / 8) { FloatArray(scaledBitmap.width / 8) })) //FloatArray(1, scaledBitmap.height / 8, scaledBitmap.width / 8)
-
+        val output = arrayOf(arrayOf(Array(scaledBitmap.height / 8) { FloatArray(scaledBitmap.width / 8) }))
 
         tflite.run(input_array, output)
-
-
-        /*inferenceInterface.feed(
-            "0", input.toFloatArray(), 1, 3,
-            scaledBitmap.height.toLong(), scaledBitmap.width.toLong()
-        )
-
-        inferenceInterface.run(arrayOf("Sigmoid"))
-        inferenceInterface.fetch("Sigmoid", output)*/
 
         val flattenOutput = mutableListOf<Float>()
         output.flatten().forEachIndexed { i, arrayOfArrays ->
@@ -90,14 +77,14 @@ class MainActivity : AppCompatActivity() {
                     flattenOutput.add(value)
                 }
             }
-
         }
 
         val temperature = 0.25f
 
+        var a = flattenOutput
+            .map { ln(it.toDouble()).toFloat() / temperature }.toFloatArray()
+            .map { exp(it.toDouble()).toFloat() }.toFloatArray()
 
-        var a = flattenOutput.map { ln(it.toDouble()).toFloat() / temperature }.toFloatArray()
-        a = a.map { exp(it.toDouble()).toFloat() }.toFloatArray()
         val sum = a.sum()
         a = a.map { it / sum }.toFloatArray()
 
