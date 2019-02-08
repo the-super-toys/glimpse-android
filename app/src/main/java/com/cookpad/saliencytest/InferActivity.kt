@@ -79,9 +79,4 @@ class InferActivity : AppCompatActivity() {
 
         print(output)
     }
-
-
-    private fun predic() {
-
-    }
 }
