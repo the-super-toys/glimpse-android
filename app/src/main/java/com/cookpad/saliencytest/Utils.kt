@@ -7,7 +7,6 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
 
-
 object Utils {
     fun loadModelFile(activity: Activity, MODEL_FILE: String): MappedByteBuffer {
         val fileDescriptor = activity.assets.openFd(MODEL_FILE)
@@ -19,43 +18,38 @@ object Utils {
     }
 
     fun crop(original: Bitmap, x: Float, y: Float): Bitmap {
-        val windowPct = .5f
+        val windowPct = .2f
 
         val cropped = original.run {
-            val xWith = (x * width).toInt()
-            val yHeight = (y * height).toInt()
+            val croppedWith = (width * windowPct).toInt()
+            val croppedHeight = (height * windowPct).toInt()
 
-            val croppedWith = (width * windowPct / 2).toInt()
-            val croppedHeight = (height * windowPct / 2).toInt()
+            val xWith = (x * width - croppedWith * .5).toInt()
+            val yHeight = (y * height - croppedHeight * .5).toInt()
 
-            val xAdjusted = if (xWith > width * windowPct) {
-                minOf(xWith - croppedWith, (width * windowPct).toInt())
+            val xAdjusted = if (xWith + croppedWith > width) {
+                width - croppedWith
             } else {
-                maxOf(xWith - croppedWith, 0)
+                maxOf(xWith, 0)
             }
 
-            val yAdjusted = if (yHeight > height * windowPct) {
-                minOf(yHeight - croppedHeight, (height * windowPct).toInt())
+            val yAdjusted = if (yHeight + croppedHeight > height) {
+                height - croppedHeight
             } else {
-                maxOf(yHeight - croppedHeight, 0)
+                maxOf(yHeight, 0)
             }
-
-/*            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = true*/
 
             Bitmap.createBitmap(
                 this,
                 xAdjusted,
                 yAdjusted,
-                (width * windowPct).toInt(),
-                (height * windowPct).toInt()
+                croppedWith,
+                croppedHeight
             )
         }
 
-        return Bitmap.createScaledBitmap(
-            cropped, original.width, original.height,
-            true
-        )
+
+        return cropped
     }
 }
 

@@ -14,7 +14,7 @@
         <ImageView
                 android:id="@+id/ivOriginal"
                 android:layout_width="wrap_content"
-                android:src="@drawable/grid_numbers_square"
+                android:src="@drawable/grid_numbers_landscape"
                 android:layout_height="wrap_content"/>
 
     </LinearLayout>
