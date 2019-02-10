@@ -13,6 +13,7 @@
     <ImageView
             android:id="@+id/ivCrop"
             android:layout_width="wrap_content"
+            android:background="@color/colorAccent"
             android:layout_height="wrap_content"/>
 
 </LinearLayout>
