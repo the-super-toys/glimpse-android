@@ -2,6 +2,7 @@ package com.cookpad.saliencytest
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.Color
 import java.io.FileInputStream
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
@@ -95,6 +96,33 @@ object Utils {
             croppedWith,
             croppedHeight
         )
+    }
+
+    fun generateEmptyTensor(batches: Int, channels: Int, rows: Int, cols: Int, defaultValue: Float = 0f) =
+        Array(batches) {
+            Array(channels) {
+                Array(rows) {
+                    FloatArray(cols) {
+                        defaultValue
+                    }
+                }
+            }
+        }
+
+    fun populateTensorFromPixels(tensor: Array<Array<Array<FloatArray>>>, pixels: IntArray) {
+        if (pixels.size != tensor[0][0].size * tensor[0][0][0].size) {
+            throw ArrayIndexOutOfBoundsException("The tensor and the pixels array have incompatible shapes")
+        }
+
+        for (i in 0 until tensor[0][0].size) {
+            for (j in 0 until tensor[0][0][0].size) {
+                val pixel = pixels[j + i * tensor[0][0][0].size]
+
+                tensor[0][0][i][j] = Color.red(pixel) / 255f
+                tensor[0][1][i][j] = Color.green(pixel) / 255f
+                tensor[0][2][i][j] = Color.blue(pixel) / 255f
+            }
+        }
     }
 }
 

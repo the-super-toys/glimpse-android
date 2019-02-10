@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.cookpad.saliencytest.Utils.generateEmptyTensor
+import com.cookpad.saliencytest.Utils.populateTensorFromPixels
 import kotlinx.android.synthetic.main.activity_infer.*
 import org.tensorflow.lite.Interpreter
 import kotlin.math.exp
@@ -23,32 +25,16 @@ class InferActivity : AppCompatActivity() {
         val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
         scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
-        val red = mutableListOf<FloatArray>()
-        val green = mutableListOf<FloatArray>()
-        val blue = mutableListOf<FloatArray>()
+        // generate input tensor from pixeles
+        val input = generateEmptyTensor(1, 3, scaledBitmap.height, scaledBitmap.width)
+        populateTensorFromPixels(input, pixels)
 
-        for (i in 0 until scaledBitmap.height) {
-            val row_red = FloatArray(scaledBitmap.width)
-            val row_green = FloatArray(scaledBitmap.width)
-            val row_blue = FloatArray(scaledBitmap.width)
-
-            for (j in 0 until scaledBitmap.width) {
-                val pixel = pixels[j + i * scaledBitmap.width]
-                row_red[j] = Color.red(pixel) / 255f
-                row_green[j] = Color.green(pixel) / 255f
-            }
-
-            red.add(row_red)
-            green.add(row_green)
-            blue.add(row_blue)
-        }
-
-        val input = arrayOf(arrayOf(red.toTypedArray(), green.toTypedArray(), blue.toTypedArray()))
-        val output = arrayOf(arrayOf(Array(scaledBitmap.height / 8) { FloatArray(scaledBitmap.width / 8) }))
+        val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
 
         Interpreter(Utils.loadModelFile(this, "saliency.tflite"), Interpreter.Options())
             .run(input, output)
 
+        // From this point, we will probably not use anything for the final product so I will not refactor it for now
         val flattenOutput = output.flatten().flatMap { it.flatMap { it.map { it } } }
 
         val temperature = 0.25f
