@@ -14,31 +14,22 @@ class CropActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crop)
 
-        var original = (ivOriginal.drawable as BitmapDrawable).bitmap
+        val original = (ivOriginal.drawable as BitmapDrawable).bitmap
         //original = Bitmap.createScaledBitmap(original, 500,1000, true)
-
-        LayoutInflater.from(this).inflate(R.layout.item_crop, llContainer)
-        val item =  llContainer.getChildAt(llContainer.childCount-1)
 
         val width = pxFromDp(200)
         val height = pxFromDp(100)
-        //item.findViewById<ImageView>(R.id.ivCrop).setImageBitmap(Utils.crop(original,.0f, .0f, size, size))
-
 
         for (i in 0..9) {
             val x = i * .1f
             val y = i * .1f
 
             LayoutInflater.from(this).inflate(R.layout.item_crop, llContainer)
-            val item =  llContainer.getChildAt(llContainer.childCount-1)
+            val item = llContainer.getChildAt(llContainer.childCount - 1)
             item.findViewById<TextView>(R.id.tvCrop).text = "x:$x,y:$y"
             item.findViewById<ImageView>(R.id.ivCrop).setImageBitmap(crop(original, x, y, width, height))
         }
     }
 
-    fun pxFromDp(dp: Int): Int {
-        return (dp * getResources().getDisplayMetrics().density).toInt()
-    }
-
-
+    fun pxFromDp(dp: Int) = (dp * getResources().getDisplayMetrics().density).toInt()
 }

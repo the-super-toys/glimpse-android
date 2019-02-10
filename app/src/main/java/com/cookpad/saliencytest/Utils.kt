@@ -8,11 +8,6 @@ import java.nio.channels.FileChannel
 import kotlin.math.max
 import kotlin.math.min
 
-
-enum class Orientation {
-    Landscape, Portrait, Square
-}
-
 object Utils {
     fun loadModelFile(activity: Activity, MODEL_FILE: String): MappedByteBuffer {
         val fileDescriptor = activity.assets.openFd(MODEL_FILE)
@@ -25,21 +20,35 @@ object Utils {
 
     fun crop(original: Bitmap, x: Float, y: Float, targetWith: Int, targetHeight: Int): Bitmap {
         val resizedBitmap = when {
-            targetWith >= targetHeight -> if (original.width < targetWith) {
-                val newWidth = targetWith * 1
-                val ratio = original.width.toFloat() / newWidth.toFloat()
-                Bitmap.createScaledBitmap(original, newWidth, (original.height / ratio).toInt(), true)
-            } else {
-                val newWidth = (targetWith * 1.5).toInt()
+            targetWith > targetHeight -> { //target landscape
+                val newWidth = (targetWith * when {
+                    original.width > original.height -> 2f //source landscape
+                    original.width == original.height -> 2f //source square
+                    else -> 1.25f //source portrait
+                }).toInt()
+
                 val ratio = original.width.toFloat() / newWidth.toFloat()
                 Bitmap.createScaledBitmap(original, newWidth, (original.height / ratio).toInt(), true)
             }
-            else -> if (original.height < targetHeight) {
-                val newHeight = targetHeight * 1
+            targetWith == targetHeight -> { //target square
+                val newWidth = (targetWith * when {
+                    original.width > original.height -> 3f //source landscape
+                    original.width == original.height -> 3f //source square
+                    else -> 1.5f //source portrait
+                }).toInt()
+
+                val ratio = original.width.toFloat() / newWidth.toFloat()
+                Bitmap.createScaledBitmap(original, newWidth, (original.height / ratio).toInt(), true)
+            }
+            else -> { // target portrait
+                val newHeight = (targetHeight * when {
+                    original.width > original.height -> 1f //source landscape
+                    original.width == original.height -> 1.5f //source square
+                    else -> 2f //source portrait
+                }).toInt()
+
                 val ratio = original.height.toFloat() / newHeight.toFloat()
                 Bitmap.createScaledBitmap(original, (original.width / ratio).toInt(), newHeight, true)
-            } else {
-                original
             }
         }
 
