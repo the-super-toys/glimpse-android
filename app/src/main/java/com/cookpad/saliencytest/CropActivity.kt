@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
-import com.cookpad.saliencytest.Utils.crop
 import kotlinx.android.synthetic.main.activity_crop.*
 
 class CropActivity : AppCompatActivity() {
@@ -17,9 +16,11 @@ class CropActivity : AppCompatActivity() {
         val original = (ivOriginal.drawable as BitmapDrawable).bitmap
         //original = Bitmap.createScaledBitmap(original, 500,1000, true)
 
-        val width = pxFromDp(200)
-        val height = pxFromDp(100)
+        inflateViews()
+        inflateViews()
+    }
 
+    private fun inflateViews() {
         for (i in 0..9) {
             val x = i * .1f
             val y = i * .1f
@@ -27,9 +28,20 @@ class CropActivity : AppCompatActivity() {
             LayoutInflater.from(this).inflate(R.layout.item_crop, llContainer)
             val item = llContainer.getChildAt(llContainer.childCount - 1)
             item.findViewById<TextView>(R.id.tvCrop).text = "x:$x,y:$y"
-            item.findViewById<ImageView>(R.id.ivCrop).setImageBitmap(crop(original, x, y, width, height))
+
+            val imageView = item.findViewById<ImageView>(R.id.ivCrop)
+
+/*            Picasso.get().load(R.drawable.grid_numbers_landscape)
+                .transform(FocusTransformationPicasso(imageView, x, y))
+                .into(imageView);*/
+
+            GlideApp.with(this)
+                .load(R.drawable.grid_numbers_landscape_low)
+                .transform(FocusTransformationGlide())
+                .into(imageView);
+
+
+            //item.findViewById<ImageView>(R.id.ivCrop).setImageBitmap(crop2(original, x, y, width, height))
         }
     }
-
-    fun pxFromDp(dp: Int) = (dp * getResources().getDisplayMetrics().density).toInt()
 }

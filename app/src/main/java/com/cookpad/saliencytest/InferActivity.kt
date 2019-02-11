@@ -30,7 +30,7 @@ class InferActivity : AppCompatActivity() {
 
         val bitmap = (original.drawable as BitmapDrawable).bitmap
         val newWidth = (240f / bitmap.height) * bitmap.width
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth.toInt(), 240, false)
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 320, 240, false)
         val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
         scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
