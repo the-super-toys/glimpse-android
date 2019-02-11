@@ -1,9 +1,10 @@
 package com.cookpad.saliencytest
 
-import android.app.Activity
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.cookpad.saliencytest.Utils.generateEmptyTensor
+import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
@@ -13,7 +14,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 object Utils {
-    fun loadModelFile(activity: Activity, MODEL_FILE: String): MappedByteBuffer {
+    fun loadModelFile(activity: Context, MODEL_FILE: String): MappedByteBuffer {
         val fileDescriptor = activity.assets.openFd(MODEL_FILE)
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
@@ -167,6 +168,54 @@ object Utils {
         val exp = logits.map { exp(it) }
         val sum = exp.sum()
         return exp.map { it / sum }.toFloatArray()
+    }
+}
+
+object SmartCrop {
+
+    enum class CenterMode {
+        AVERAGE,
+        LARGEST
+    }
+
+    var interpreter: Interpreter? = null
+
+    fun init(context: Context) {
+        interpreter = Interpreter(Utils.loadModelFile(context, "saliency.tflite"), Interpreter.Options().apply {
+            this.setNumThreads(4)
+        })
+    }
+
+    fun findBitmapCenter(
+        bitmap: Bitmap,
+        centerMode: CenterMode = CenterMode.LARGEST,
+        temperature: Float = 0.25f,
+        lowerBound: Float = 0.25f
+    ): Pair<Float, Float> {
+        // resize bitmap to make process faster and better
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 320, 240, false)
+        val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
+        scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
+
+        // setup tensors
+        val input = generateEmptyTensor(1, 3, scaledBitmap.height, scaledBitmap.width)
+        Utils.populateTensorFromPixels(input, pixels)
+
+        val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
+
+        interpreter?.run(input, output)
+
+        // calculate tempered softmax
+        val flattened = output[0][0].flattened()
+        val softmaxed = Utils.softmax(flattened).temper(temperature)
+        val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
+
+        // get averaged center
+        return if (centerMode == CenterMode.AVERAGE) {
+            Utils.getAveragedCenter(reshaped[0][0])
+        } else {
+            Utils.getTopZoneCenter(reshaped[0][0], lowerBound = lowerBound)
+        }
     }
 }
 
