@@ -3,9 +3,12 @@ package com.cookpad.saliencytest
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Color
+import com.cookpad.saliencytest.Utils.generateEmptyTensor
 import java.io.FileInputStream
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import kotlin.math.exp
+import kotlin.math.ln
 import kotlin.math.max
 import kotlin.math.min
 
@@ -124,5 +127,100 @@ object Utils {
             }
         }
     }
+
+    fun getAveragedCenter(heatMap: Array<FloatArray>): Pair<Float, Float> {
+        var x = 0f
+        var y = 0f
+
+        heatMap.forEachIndexed { positionY, row ->
+            row.forEachIndexed { positionX, value ->
+                x += value * positionX
+                y += value * positionY
+            }
+        }
+
+        return Pair(x / heatMap[0].size, y / heatMap.size)
+    }
+
+    fun getTopZoneCenter(heatMap: Array<FloatArray>, lowerBound: Float): Pair<Float, Float> {
+        val minValue = lowerBound * (heatMap.map { it.max() ?: 0f }.max() ?: 0f)
+        val cheatSheet = Array(heatMap.size) { IntArray(heatMap[0].size) }
+        val blobs = mutableListOf<BinaryBlob>()
+
+        heatMap.forEachIndexed { i, row ->
+            row.forEachIndexed { j, value ->
+                if (value >= minValue && cheatSheet[i][j] == 0) {
+                    val blob = BinaryBlob(j, i)
+                    blob.explore(j, i, heatMap, cheatSheet, minValue)
+                    blobs.add(blob)
+                }
+            }
+        }
+
+        return blobs.maxBy { it.size }?.let {
+            val centerPosition = it.getCenter()
+            Pair(centerPosition.first / heatMap[0].size, centerPosition.second / heatMap.size)
+        } ?: Pair(0.5f, 0.5f)
+    }
+
+    fun softmax(logits: FloatArray): FloatArray {
+        val exp = logits.map { exp(it) }
+        val sum = exp.sum()
+        return exp.map { it / sum }.toFloatArray()
+    }
 }
 
+class BinaryBlob(startingX: Int, startingY: Int) {
+    var size = 0
+    var hBounds = Pair(startingX, startingX)
+    var vBounds = Pair(startingY, startingY)
+
+    fun addPixel(x: Int, y: Int) {
+        size++
+        hBounds = Pair(min(hBounds.first, x), max(hBounds.second, x))
+        vBounds = Pair(min(vBounds.first, y), max(vBounds.second, y))
+    }
+
+    fun explore(j: Int, i: Int, heatMap: Array<FloatArray>, cheatSheet: Array<IntArray>, lowerBound: Float) {
+        if (heatMap.getOrNull(i)?.getOrNull(j) ?: 0f > lowerBound && cheatSheet[i][j] == 0) {
+            addPixel(j, i)
+            cheatSheet[i][j] = 1
+
+            explore(j + 1, i, heatMap, cheatSheet, lowerBound)
+            explore(j - 1, i, heatMap, cheatSheet, lowerBound)
+            explore(j, i + 1, heatMap, cheatSheet, lowerBound)
+            explore(j, i - 1, heatMap, cheatSheet, lowerBound)
+        }
+    }
+
+    fun getCenter() = Pair((hBounds.second + hBounds.first) / 2f, (vBounds.second + vBounds.first) / 2f)
+}
+
+fun Array<FloatArray>.flattened(): FloatArray {
+    var flattened = floatArrayOf()
+    this.forEach { row ->
+        flattened += row
+    }
+    return flattened
+}
+
+fun FloatArray.reshape(rows: Int, cols: Int): Array<Array<Array<FloatArray>>> {
+    val newShaped = generateEmptyTensor(1, 1, rows, cols)
+    for (i in 0 until rows) {
+        for (j in 0 until cols) {
+            val value = this[j + i * cols]
+
+            newShaped[0][0][i][j] = value
+        }
+    }
+    return newShaped
+}
+
+fun FloatArray.temper(temperature: Float) = this.map {
+    ln(it) / temperature
+}.map {
+    exp(it)
+}.let { a ->
+    val sum = a.sum()
+    a.map { it / sum }
+}.toFloatArray()
