@@ -14,7 +14,7 @@ import kotlin.random.Random
 class GlimpseTransformation(private val zoom: Float = 1f) : BitmapTransformation() {
 
     companion object {
-        private val id = "com.thesupertoys.transformations.FocusTransformation"
+        private val id = "glimpse.glide.transformation"
         private val idBytes = id.toByteArray(Charset.forName("UTF-8"))
     }
 

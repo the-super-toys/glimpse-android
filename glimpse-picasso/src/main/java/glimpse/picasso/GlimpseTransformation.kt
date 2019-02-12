@@ -7,7 +7,7 @@ import glimpse.core.crop
 
 class GlimpseTransformation(target: ImageView, private val zoom: Float = 1f) : Transformation {
     companion object {
-        private val id = "com.thesupertoys.transformations.FocusTransformation"
+        private val id = "glimpse.picasso.transformation"
     }
 
     private val targetWidth by lazy { target.layoutParams.width }
