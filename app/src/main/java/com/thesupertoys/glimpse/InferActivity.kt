@@ -1,10 +1,10 @@
-package com.cookpad.saliencytest
+package com.thesupertoys.glimpse
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.TimingLogger
-import com.cookpad.saliencytest.Utils.crop
+import com.thesupertoys.glimpse.Utils.crop
 import kotlinx.android.synthetic.main.activity_infer.*
 
 

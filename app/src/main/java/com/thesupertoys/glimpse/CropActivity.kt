@@ -1,4 +1,4 @@
-package com.cookpad.saliencytest
+package com.thesupertoys.glimpse
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle

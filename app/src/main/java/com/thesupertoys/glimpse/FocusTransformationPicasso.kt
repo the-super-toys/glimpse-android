@@ -1,4 +1,4 @@
-package com.cookpad.saliencytest
+package com.thesupertoys.glimpse
 
 import android.graphics.Bitmap
 import android.widget.ImageView

@@ -1,9 +1,9 @@
-package com.cookpad.saliencytest
+package com.thesupertoys.glimpse
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
-import com.cookpad.saliencytest.Utils.generateEmptyTensor
+import com.thesupertoys.glimpse.Utils.generateEmptyTensor
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.MappedByteBuffer
