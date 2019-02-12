@@ -8,7 +8,7 @@ import glimpse.core.crop
 import glimpse.core.findCenter
 import kotlinx.android.synthetic.main.activity_infer.*
 
-class InferActivity : AppCompatActivity() {
+class GlimpseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
