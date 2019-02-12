@@ -63,14 +63,15 @@ fun Bitmap.fitOptimizingZoom(targetWith: Int, targetHeight: Int): Bitmap {
             Bitmap.createScaledBitmap(this, newWidth, (height / ratio).toInt(), true)
         }
         targetWith == targetHeight -> { //target square
-            val newWidth = (targetWith * when {
-                width > height -> min(3f, diff) //source landscape
-                width == height -> min(3f, diff) //source square
-                else -> min(1.5f, diff) //source portrait
-            }).toInt()
-
-            val ratio = width.toFloat() / newWidth.toFloat()
-            Bitmap.createScaledBitmap(this, newWidth, (height / ratio).toInt(), true)
+            if (width >= height) { // source landscape or square
+                val newHeight = (targetHeight * min(1.5f, diff)).toInt()
+                val ratio = height.toFloat() / newHeight.toFloat()
+                Bitmap.createScaledBitmap(this, (width / ratio).toInt(), newHeight, true)
+            } else { //source portrait
+                val newWidth = (targetWith * min(1.5f, diff)).toInt()
+                val ratio = width.toFloat() / newWidth.toFloat()
+                Bitmap.createScaledBitmap(this, newWidth, (height / ratio).toInt(), true)
+            }
         }
         else -> { // target portrait
             val newHeight = (targetHeight * when {

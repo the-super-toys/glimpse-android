@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/zoom_optimized_good_quality"
+            android:title="Zoom Optimized-Good quality"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/good_quality"
+            android:title="Good quality"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/zoom_optimized_bad_quality"
+            android:title="Zoom Optimized-Bad quality"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/bad_quality"
+            android:title="Bad quality"
+            app:showAsAction="never"/>
+</menu>

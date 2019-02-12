@@ -6,28 +6,70 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v7.app.AppCompatActivity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import glimpse.core.crop
 import glimpse.sample.Shape.*
+import glimpse.sample.TestCropActivity.Companion.goodQuality
 import glimpse.sample.TestCropActivity.Companion.sourceKey
 import glimpse.sample.TestCropActivity.Companion.targetKey
+import glimpse.sample.TestCropActivity.Companion.zoomOptimized
 import kotlinx.android.synthetic.main.fragment_crop_landscape.*
 import kotlinx.android.synthetic.main.test_activity_crop.*
+
 
 class TestCropActivity : AppCompatActivity() {
     companion object {
         val sourceKey = "sourceKey"
         val targetKey = "targetKey"
+        var zoomOptimized = true
+        var goodQuality = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.test_activity_crop)
+
+        setSupportActionBar(toolbar)
+
+        setupAdapter(R.id.zoom_optimized_good_quality)
+    }
+
+    private fun setupAdapter(itemId: Int) {
+        when (itemId) {
+            R.id.zoom_optimized_good_quality -> {
+                zoomOptimized = true
+                goodQuality = true
+            }
+            R.id.good_quality -> {
+                zoomOptimized = false
+                goodQuality = true
+            }
+            R.id.zoom_optimized_bad_quality -> {
+                zoomOptimized = true
+                goodQuality = false
+            }
+            R.id.bad_quality -> {
+                zoomOptimized = false
+                goodQuality = false
+            }
+        }
+
+        val position = pager.currentItem
         pager.adapter = TestCropPagerAdapter(supportFragmentManager)
+        pager.currentItem = position
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_test_crop, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        setupAdapter(item.itemId)
+        return super.onOptionsItemSelected(item)
     }
 }
 
@@ -70,7 +112,7 @@ class TestCropFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(
-            when (arguments!!.getSerializable(TestCropActivity.targetKey) as Shape) {
+            when (arguments!!.getSerializable(TestCropActivity.sourceKey) as Shape) {
                 Landscape -> R.layout.fragment_crop_landscape
                 Portrait -> R.layout.fragment_crop_portrait
                 Square -> R.layout.fragment_crop_square
@@ -81,11 +123,13 @@ class TestCropFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        when (arguments?.getSerializable(TestCropActivity.sourceKey) as? Shape) {
-            Landscape -> ivOriginal.setImageResource(R.drawable.grid_numbers_landscape)
-            Portrait -> ivOriginal.setImageResource(R.drawable.grid_numbers_portrait)
-            Square -> ivOriginal.setImageResource(R.drawable.grid_numbers_square)
-        }
+        ivOriginal.setImageResource(
+            when (arguments!!.getSerializable(TestCropActivity.sourceKey) as Shape) {
+                Landscape -> if (goodQuality) R.drawable.grid_numbers_landscape else R.drawable.grid_numbers_landscape_low
+                Portrait -> if (goodQuality) R.drawable.grid_numbers_portrait else R.drawable.grid_numbers_portrait_low
+                Square -> if (goodQuality) R.drawable.grid_numbers_square else R.drawable.grid_numbers_square_low
+            }
+        )
 
         val original = (ivOriginal.drawable as BitmapDrawable).bitmap
         //original = Bitmap.createScaledBitmap(original, 500,1000, true)
@@ -111,7 +155,8 @@ class TestCropFragment : Fragment() {
                     x,
                     y,
                     imageView.layoutParams.width,
-                    imageView.layoutParams.height
+                    imageView.layoutParams.height,
+                    optimizeZoom = zoomOptimized
                 )
             )
 
