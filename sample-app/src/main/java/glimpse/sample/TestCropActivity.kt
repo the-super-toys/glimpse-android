@@ -69,11 +69,13 @@ class TestCropFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(when (arguments!!.getSerializable(TestCropActivity.targetKey) as Shape) {
-            Landscape -> R.layout.fragment_crop_landscape
-            Portrait -> R.layout.fragment_crop_portrait
-            Square -> R.layout.fragment_crop_square
-        }, container, false)
+        return inflater.inflate(
+            when (arguments!!.getSerializable(TestCropActivity.targetKey) as Shape) {
+                Landscape -> R.layout.fragment_crop_landscape
+                Portrait -> R.layout.fragment_crop_portrait
+                Square -> R.layout.fragment_crop_square
+            }, container, false
+        )
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
