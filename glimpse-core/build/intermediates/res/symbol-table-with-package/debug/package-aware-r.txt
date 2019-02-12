@@ -1,2 +1,0 @@
-glimpse.core
-string app_name
