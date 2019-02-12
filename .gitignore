@@ -5,6 +5,6 @@
 !.idea/codeStyles/Project.xml
 !.idea/codeStyles/codeStyleConfig.xml
 .DS_Store
-/build
+*/build/
 /captures
 .externalNativeBuild
