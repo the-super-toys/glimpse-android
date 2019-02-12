@@ -1,1 +1,1 @@
-include ':app', ':glimpse-core'
+include ':app', ':glimpse-core', ':glimpse-glide'

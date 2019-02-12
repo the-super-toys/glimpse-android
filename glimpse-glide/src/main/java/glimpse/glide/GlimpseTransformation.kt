@@ -1,4 +1,4 @@
-package glimpse.sample
+package glimpse.glide
 
 import android.graphics.Bitmap
 import android.os.Build.ID
@@ -11,7 +11,7 @@ import java.nio.charset.Charset
 import java.security.MessageDigest
 import kotlin.random.Random
 
-class FocusTransformationGlide(private val zoom: Float = 1f) : BitmapTransformation() {
+class GlimpseTransformation(private val zoom: Float = 1f) : BitmapTransformation() {
 
     companion object {
         private val id = "com.thesupertoys.transformations.FocusTransformation"
@@ -24,7 +24,7 @@ class FocusTransformationGlide(private val zoom: Float = 1f) : BitmapTransformat
         return toTransform.crop(x, y, outWidth, outHeight)
     }
 
-    override fun equals(other: Any?): Boolean = if (other is FocusTransformationGlide) {
+    override fun equals(other: Any?): Boolean = if (other is GlimpseTransformation) {
         zoom == other.zoom
     } else {
         false

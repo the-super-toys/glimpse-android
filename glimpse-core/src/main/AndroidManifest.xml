@@ -1,1 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"  package="glimpse.core"/>
+<manifest package="glimpse.core"/>

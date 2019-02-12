@@ -10,9 +10,9 @@
             android:supportsRtl="true"
             android:name=".SampleApp"
             android:theme="@style/AppTheme">
-        <activity android:name=".CropActivity"/>
+        <activity android:name=".InferActivity"/>
 
-        <activity android:name=".InferActivity">
+        <activity android:name=".CropActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

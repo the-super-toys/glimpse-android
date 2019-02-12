@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
+import glimpse.glide.GlimpseTransformation
 import kotlinx.android.synthetic.main.activity_crop.*
 
 class CropActivity : AppCompatActivity() {
@@ -37,7 +38,7 @@ class CropActivity : AppCompatActivity() {
 
             GlideApp.with(this)
                 .load(R.drawable.grid_numbers_landscape_low)
-                .transform(FocusTransformationGlide())
+                .transform(GlimpseTransformation())
                 .into(imageView);
 
 
