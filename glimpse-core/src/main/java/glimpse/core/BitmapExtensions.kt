@@ -5,7 +5,7 @@ import glimpse.core.ArrayUtils.generateEmptyTensor
 import kotlin.math.max
 import kotlin.math.min
 
-fun Bitmap.crop(x: Float, y: Float, targetWith: Int, targetHeight: Int, optimizeZoom: Boolean = false): Bitmap {
+fun Bitmap.crop(x: Float, y: Float, targetWith: Int, targetHeight: Int, optimizeZoom: Boolean = true): Bitmap {
     val resizedBitmap = if (optimizeZoom) fitOptimizingZoom(targetWith, targetHeight) else fit(targetWith, targetHeight)
 
     val xWith = max((x * resizedBitmap.width - targetWith * .5).toInt(), 0)
@@ -46,36 +46,42 @@ private fun Bitmap.fit(targetWith: Int, targetHeight: Int) =
         }
     }
 
-fun Bitmap.fitOptimizingZoom(targetWith: Int, targetHeight: Int) = when {
-    targetWith > targetHeight -> { //target landscape
-        val newWidth = (targetWith * when {
-            width > height -> 2f //source landscape
-            width == height -> 2f //source square
-            else -> 1.25f //source portrait
-        }).toInt()
+fun Bitmap.fitOptimizingZoom(targetWith: Int, targetHeight: Int): Bitmap {
+    val targetSize = targetWith * targetHeight
+    val sourceSize = width * height
+    val diff = max(1f, sourceSize.toFloat() / targetSize.toFloat())
 
-        val ratio = width.toFloat() / newWidth.toFloat()
-        Bitmap.createScaledBitmap(this, newWidth, (height / ratio).toInt(), true)
-    }
-    targetWith == targetHeight -> { //target square
-        val newWidth = (targetWith * when {
-            width > height -> 3f //source landscape
-            width == height -> 3f //source square
-            else -> 1.5f //source portrait
-        }).toInt()
+    return when {
+        targetWith > targetHeight -> { //target landscape
+            val newWidth = (targetWith * when {
+                width > height -> min(2f, diff) //source landscape
+                width == height -> min(2f, diff) //source square
+                else -> min(1.25f, diff) //source portrait
+            }).toInt()
 
-        val ratio = width.toFloat() / newWidth.toFloat()
-        Bitmap.createScaledBitmap(this, newWidth, (height / ratio).toInt(), true)
-    }
-    else -> { // target portrait
-        val newHeight = (targetHeight * when {
-            width > height -> 1f //source landscape
-            width == height -> 1.5f //source square
-            else -> 2f //source portrait
-        }).toInt()
+            val ratio = width.toFloat() / newWidth.toFloat()
+            Bitmap.createScaledBitmap(this, newWidth, (height / ratio).toInt(), true)
+        }
+        targetWith == targetHeight -> { //target square
+            val newWidth = (targetWith * when {
+                width > height -> min(3f, diff) //source landscape
+                width == height -> min(3f, diff) //source square
+                else -> min(1.5f, diff) //source portrait
+            }).toInt()
 
-        val ratio = height.toFloat() / newHeight.toFloat()
-        Bitmap.createScaledBitmap(this, (width / ratio).toInt(), newHeight, true)
+            val ratio = width.toFloat() / newWidth.toFloat()
+            Bitmap.createScaledBitmap(this, newWidth, (height / ratio).toInt(), true)
+        }
+        else -> { // target portrait
+            val newHeight = (targetHeight * when {
+                width > height -> 1f //source landscape
+                width == height -> min(1.5f, diff) //source square
+                else -> min(2f, diff) //source portrait
+            }).toInt()
+
+            val ratio = height.toFloat() / newHeight.toFloat()
+            Bitmap.createScaledBitmap(this, (width / ratio).toInt(), newHeight, true)
+        }
     }
 }
 
