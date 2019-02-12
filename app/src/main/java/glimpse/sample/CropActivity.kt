@@ -1,4 +1,4 @@
-package com.thesupertoys.glimpse
+package glimpse.sample
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle

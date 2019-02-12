@@ -1,8 +1,9 @@
-package com.thesupertoys.glimpse
+package glimpse.sample
 
 import android.graphics.Bitmap
 import android.widget.ImageView
 import com.squareup.picasso.Transformation
+import glimpse.core.crop
 
 class FocusTransformationPicasso(target: ImageView, private val zoom: Float = 1f) : Transformation {
     companion object {
@@ -13,7 +14,7 @@ class FocusTransformationPicasso(target: ImageView, private val zoom: Float = 1f
     private val targetHeight by lazy { target.layoutParams.height }
 
     override fun transform(source: Bitmap): Bitmap {
-        return Utils.crop(source, 0.1f, 0.1f, targetWidth, targetHeight).apply {
+        return source.crop(0.1f, 0.1f, targetWidth, targetHeight).apply {
             source.recycle()
         }
     }

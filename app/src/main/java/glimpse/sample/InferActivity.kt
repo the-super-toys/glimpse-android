@@ -1,12 +1,12 @@
-package com.thesupertoys.glimpse
+package glimpse.sample
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.TimingLogger
-import com.thesupertoys.glimpse.Utils.crop
+import glimpse.core.crop
+import glimpse.core.findCenter
 import kotlinx.android.synthetic.main.activity_infer.*
-
 
 class InferActivity : AppCompatActivity() {
 
@@ -14,31 +14,30 @@ class InferActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_infer)
 
-        SmartCrop.init(this)
 
         val timings = TimingLogger("PIPELINE", "imageCenterCropping")
 
         val bitmap = (original.drawable as BitmapDrawable).bitmap
-        val center = SmartCrop.findBitmapCenter(bitmap)
+        val center = bitmap.findCenter()
 
         timings.addSplit("Get center from bitmap")
 
         landscape.post {
-            val landscapeBitmap = crop(bitmap, center.first, center.second, landscape.width, landscape.height)
+            val landscapeBitmap = bitmap.crop(center.first, center.second, landscape.width, landscape.height)
             landscape.setImageBitmap(landscapeBitmap)
         }
 
         timings.addSplit("Crop landscape")
 
         square.post {
-            val squareBitmap = crop(bitmap, center.first, center.second, square.width, square.height)
+            val squareBitmap = bitmap.crop(center.first, center.second, square.width, square.height)
             square.setImageBitmap(squareBitmap)
         }
 
         timings.addSplit("Crop square")
 
         portrait.post {
-            val portraitBitmap = crop(bitmap, center.first, center.second, portrait.width, portrait.height)
+            val portraitBitmap = bitmap.crop(center.first, center.second, portrait.width, portrait.height)
             portrait.setImageBitmap(portraitBitmap)
         }
 
