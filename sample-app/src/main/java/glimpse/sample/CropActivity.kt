@@ -6,7 +6,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
-import glimpse.glide.GlimpseTransformation
+import com.squareup.picasso.Picasso
+import glimpse.picasso.GlimpseTransformation
 import kotlinx.android.synthetic.main.activity_crop.*
 
 class CropActivity : AppCompatActivity() {
@@ -32,14 +33,14 @@ class CropActivity : AppCompatActivity() {
 
             val imageView = item.findViewById<ImageView>(R.id.ivCrop)
 
-/*            Picasso.get().load(R.drawable.grid_numbers_landscape)
-                .transform(FocusTransformationPicasso(imageView, x, y))
-                .into(imageView);*/
+            Picasso.get().load(R.drawable.grid_numbers_landscape)
+                .transform(GlimpseTransformation(imageView))
+                .into(imageView);
 
-            GlideApp.with(this)
+/*            GlideApp.with(this)
                 .load(R.drawable.grid_numbers_landscape_low)
                 .transform(GlimpseTransformation())
-                .into(imageView);
+                .into(imageView);*/
 
 
             //item.findViewById<ImageView>(R.id.ivCrop).setImageBitmap(crop2(original, x, y, width, height))
