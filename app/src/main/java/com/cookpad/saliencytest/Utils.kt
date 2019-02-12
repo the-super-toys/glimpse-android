@@ -179,18 +179,25 @@ object SmartCrop {
     }
 
     var interpreter: Interpreter? = null
+    var interpreterLight: Interpreter? = null
 
     fun init(context: Context) {
         interpreter = Interpreter(Utils.loadModelFile(context, "saliency.tflite"), Interpreter.Options().apply {
             this.setNumThreads(4)
         })
+
+        interpreterLight =
+                Interpreter(Utils.loadModelFile(context, "saliency_light.tflite"), Interpreter.Options().apply {
+                    this.setNumThreads(4)
+                })
     }
 
     fun findBitmapCenter(
         bitmap: Bitmap,
         centerMode: CenterMode = CenterMode.LARGEST,
         temperature: Float = 0.25f,
-        lowerBound: Float = 0.25f
+        lowerBound: Float = 0.25f,
+        useLightModel: Boolean = true
     ): Pair<Float, Float> {
         // resize bitmap to make process faster and better
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 320, 240, false)
@@ -203,7 +210,11 @@ object SmartCrop {
 
         val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
 
-        interpreter?.run(input, output)
+        if (useLightModel) {
+            interpreterLight?.run(input, output)
+        } else {
+            interpreter?.run(input, output)
+        }
 
         // calculate tempered softmax
         val flattened = output[0][0].flattened()
