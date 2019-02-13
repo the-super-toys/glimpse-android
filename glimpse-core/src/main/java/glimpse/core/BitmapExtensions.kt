@@ -6,15 +6,29 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-fun Bitmap.cropAlt(x: Float, y: Float, targetWith: Int, targetHeight: Int, zoom: Float = 1f): Bitmap {
-    val ratio = targetWith / targetHeight.toFloat()
+fun Bitmap.cropAlt(x: Float, y: Float, targetWith: Int, targetHeight: Int, optimizeZoom: Boolean = true): Bitmap {
+    val ratioTarget = targetWith / targetHeight.toFloat()
+    val ratioSource = width / height.toFloat()
 
-    val (newWidth, newHeight) = if (ratio < width / height.toFloat()) {
-        Pair(height * ratio, height.toFloat())
+    val (newWidth, newHeight) = if (ratioTarget < ratioSource) {
+        Pair(height * ratioTarget, height.toFloat())
     } else {
-        Pair(width.toFloat(), width / ratio)
+        Pair(width.toFloat(), width / ratioTarget)
     }.let {
         // apply zoom
+        val ratioDiff = max((width * height).toFloat() / (targetWith * targetHeight).toFloat(), 1f)
+        val zoom = if (optimizeZoom) {
+            when {
+                targetWith > targetHeight && width >= height -> min(2f, ratioDiff)
+                targetWith > targetHeight && width < height -> min(1.25f, ratioDiff)
+                targetWith == targetHeight -> min(2f, ratioDiff)
+                targetWith < targetHeight && width >= height -> min(1f, ratioDiff)
+                else -> min(2f, ratioDiff)
+            }
+        } else {
+            1f
+        }
+
         Pair(floor(it.first / zoom).toInt(), floor(it.second / zoom).toInt())
     }
 

@@ -24,7 +24,7 @@ class GlimpseActivity : AppCompatActivity() {
 
         landscape.post {
             val landscapeBitmap =
-                bitmap.cropAlt(center.first, center.second, landscape.width, landscape.height, 3f)
+                bitmap.cropAlt(center.first, center.second, landscape.width, landscape.height, true)
             landscape.setImageBitmap(landscapeBitmap)
         }
 
@@ -32,7 +32,7 @@ class GlimpseActivity : AppCompatActivity() {
 
         square.post {
             val squareBitmap =
-                bitmap.cropAlt(center.first, center.second, square.width, square.height, 3f)
+                bitmap.cropAlt(center.first, center.second, square.width, square.height, true)
             square.setImageBitmap(squareBitmap)
         }
 
@@ -40,7 +40,7 @@ class GlimpseActivity : AppCompatActivity() {
 
         portrait.post {
             val portraitBitmap =
-                bitmap.cropAlt(center.first, center.second, portrait.width, portrait.height, 3f)
+                bitmap.cropAlt(center.first, center.second, portrait.width, portrait.height, true)
             portrait.setImageBitmap(portraitBitmap)
         }
 
