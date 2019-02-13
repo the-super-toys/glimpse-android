@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="glimpse.sample">
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
             android:allowBackup="true"
@@ -10,9 +12,11 @@
             android:supportsRtl="true"
             android:name=".SampleApp"
             android:theme="@style/AppTheme">
-        <activity android:name=".TestCropActivity"/>
 
-        <activity android:name=".BenmarchActivity">
+        <activity android:name=".TestCropActivity"/>
+        <activity android:name=".BenmarchActivity"/>
+
+        <activity android:name=".ImagesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
