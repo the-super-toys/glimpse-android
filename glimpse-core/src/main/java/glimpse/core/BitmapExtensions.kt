@@ -2,8 +2,35 @@ package glimpse.core
 
 import android.graphics.Bitmap
 import glimpse.core.ArrayUtils.generateEmptyTensor
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+
+fun Bitmap.cropAlt(x: Float, y: Float, targetWith: Int, targetHeight: Int, zoom: Float = 1f): Bitmap {
+    val ratio = targetWith / targetHeight.toFloat()
+
+    val (newWidth, newHeight) = if (ratio < width / height.toFloat()) {
+        Pair(height * ratio, height.toFloat())
+    } else {
+        Pair(width.toFloat(), width / ratio)
+    }.let {
+        // apply zoom
+        Pair(floor(it.first / zoom).toInt(), floor(it.second / zoom).toInt())
+    }
+
+    val centerX = min(max(x * width, newWidth / 2f), width - newWidth / 2f)
+    val centerY = min(max(y * height, newHeight / 2f), height - newHeight / 2f)
+
+    val croppedBitmap = Bitmap.createBitmap(
+        this,
+        (centerX - newWidth / 2).toInt(),
+        (centerY - newHeight / 2).toInt(),
+        newWidth,
+        newHeight
+    )
+
+    return Bitmap.createScaledBitmap(croppedBitmap, targetWith, targetHeight, true)
+}
 
 fun Bitmap.crop(x: Float, y: Float, targetWith: Int, targetHeight: Int, optimizeZoom: Boolean = true): Bitmap {
     val resizedBitmap = if (optimizeZoom) fitOptimizingZoom(targetWith, targetHeight) else fit(targetWith, targetHeight)

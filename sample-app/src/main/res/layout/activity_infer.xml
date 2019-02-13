@@ -15,7 +15,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/heatmap"
-            android:src="@drawable/original_2"
+            android:src="@drawable/lady"
             app:layout_constraintDimensionRatio="4:3"
             android:scaleType="centerCrop"/>
 
