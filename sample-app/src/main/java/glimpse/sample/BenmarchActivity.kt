@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity
 import android.util.TimingLogger
 import glimpse.core.crop
 import glimpse.core.findCenter
-import kotlinx.android.synthetic.main.activity_infer.*
+import kotlinx.android.synthetic.main.activity_benmarch.*
 
-class GlimpseActivity : AppCompatActivity() {
+class BenmarchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_infer)
+        setContentView(R.layout.activity_benmarch)
 
 
         val timings = TimingLogger("PIPELINE", "imageCenterCropping")
