@@ -22,10 +22,11 @@ class GlimpseTransformation(target: ImageView, private val optimizeZoom: Boolean
             return source
         }
 
-        val (x, y) = source.findCenter()
-        return source.crop(x, y, targetWidth, targetHeight, optimizeZoom = optimizeZoom).also {
-            source.recycle()
-        }
+        val (center, surface) = source.findCenter()
+        return source.crop(center, targetWidth, targetHeight, optimizeZoom = optimizeZoom, focusSurface = surface)
+            .also {
+                source.recycle()
+            }
     }
 
     override fun key(): String {

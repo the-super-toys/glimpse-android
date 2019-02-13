@@ -28,7 +28,7 @@ object MathUtils {
         return exp.map { it / sum }.toFloatArray()
     }
 
-    fun getAveragedCenter(heatMap: Array<FloatArray>): Pair<Float, Float> {
+    fun getAveragedFocusArea(heatMap: Array<FloatArray>): FocusArea {
         var x = 0f
         var y = 0f
 
@@ -39,14 +39,13 @@ object MathUtils {
             }
         }
 
-        return Pair(x / heatMap[0].size, y / heatMap.size)
+        return FocusArea(Pair(x / heatMap[0].size, y / heatMap.size), Pair(0f, 0f))
     }
 
-    fun getTopZoneCenter(
+    fun getLargestFocusArea(
         heatMap: Array<FloatArray>,
-        lowerBound: Float,
-        focusArea: MutableList<Float>?
-    ): Pair<Float, Float> {
+        lowerBound: Float
+    ): FocusArea {
         val minValue = lowerBound * (heatMap.map { it.max() ?: 0f }.max() ?: 0f)
         val cheatSheet = Array(heatMap.size) { IntArray(heatMap[0].size) }
         val blobs = mutableListOf<BinaryBlob>()
@@ -63,16 +62,18 @@ object MathUtils {
 
         val largestBlob = blobs.maxBy { it.size }
 
-        if (largestBlob != null && focusArea != null) {
-            val focusWidth = (largestBlob.hBounds.second - largestBlob.hBounds.first) / heatMap[0].size.toFloat()
-            val focusHeight = (largestBlob.vBounds.second - largestBlob.vBounds.first) / heatMap.size.toFloat()
-            focusArea.addAll(listOf(focusWidth, focusHeight))
-        }
+        val surface = largestBlob?.let {
+            val focusWidth = (it.hBounds.second - it.hBounds.first) / heatMap[0].size.toFloat()
+            val focusHeight = (it.vBounds.second - it.vBounds.first) / heatMap.size.toFloat()
+            Pair(focusWidth, focusHeight)
+        } ?: Pair(0f, 0f)
 
-        return largestBlob?.let {
+        val center = largestBlob?.let {
             val centerPosition = it.getCenter()
             Pair(centerPosition.first / heatMap[0].size, centerPosition.second / heatMap.size)
         } ?: Pair(0.5f, 0.5f)
+
+        return FocusArea(center, surface)
     }
 
     private class BinaryBlob(startingX: Int, startingY: Int) {
@@ -100,4 +101,6 @@ object MathUtils {
 
         fun getCenter() = Pair((hBounds.second + hBounds.first) / 2f, (vBounds.second + vBounds.first) / 2f)
     }
+
+    data class FocusArea(val center: Pair<Float, Float>, val surface: Pair<Float, Float>)
 }

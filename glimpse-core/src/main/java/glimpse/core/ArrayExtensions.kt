@@ -32,3 +32,9 @@ fun FloatArray.temper(temperature: Float) = this.map {
     val sum = a.sum()
     a.map { it / sum }
 }.toFloatArray()
+
+val Pair<Float, Float>.x
+    get() = this.first
+
+val Pair<Float, Float>.y
+    get() = this.second

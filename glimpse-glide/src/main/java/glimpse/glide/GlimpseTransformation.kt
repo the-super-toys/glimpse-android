@@ -26,8 +26,8 @@ class GlimpseTransformation(private val optimizeZoom: Boolean) : BitmapTransform
             return toTransform
         }
 
-        val (x, y) = toTransform.findCenter()
-        return toTransform.crop(x, y, outWidth, outHeight, optimizeZoom = optimizeZoom)
+        val (center, surface) = toTransform.findCenter()
+        return toTransform.crop(center, outWidth, outHeight, optimizeZoom = optimizeZoom, focusSurface = surface)
     }
 
     override fun equals(other: Any?): Boolean = if (other is GlimpseTransformation) {

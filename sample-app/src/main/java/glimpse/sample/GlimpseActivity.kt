@@ -4,7 +4,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.TimingLogger
-import glimpse.core.cropAlt
+import glimpse.core.crop
 import glimpse.core.findCenter
 import kotlinx.android.synthetic.main.activity_infer.*
 
@@ -18,14 +18,13 @@ class GlimpseActivity : AppCompatActivity() {
         val timings = TimingLogger("PIPELINE", "imageCenterCropping")
 
         val bitmap = (original.drawable as BitmapDrawable).bitmap
-        val focusArea = mutableListOf<Float>()
-        val center = bitmap.findCenter(focusArea = focusArea)
+        val (center, surface) = bitmap.findCenter()
 
         timings.addSplit("Get center from bitmap")
 
         landscape.post {
             val landscapeBitmap =
-                bitmap.cropAlt(center.first, center.second, landscape.width, landscape.height, true, focusArea)
+                bitmap.crop(center, landscape.width, landscape.height, true, surface)
             landscape.setImageBitmap(landscapeBitmap)
         }
 
@@ -33,7 +32,7 @@ class GlimpseActivity : AppCompatActivity() {
 
         square.post {
             val squareBitmap =
-                bitmap.cropAlt(center.first, center.second, square.width, square.height, true, focusArea)
+                bitmap.crop(center, square.width, square.height, true, surface)
             square.setImageBitmap(squareBitmap)
         }
 
@@ -41,7 +40,7 @@ class GlimpseActivity : AppCompatActivity() {
 
         portrait.post {
             val portraitBitmap =
-                bitmap.cropAlt(center.first, center.second, portrait.width, portrait.height, true, focusArea)
+                bitmap.crop(center, portrait.width, portrait.height, true, surface)
             portrait.setImageBitmap(portraitBitmap)
         }
 
@@ -50,19 +49,19 @@ class GlimpseActivity : AppCompatActivity() {
         // Multi size to test zoom
         square_s.post {
             val squareBitmap =
-                bitmap.cropAlt(center.first, center.second, square_s.width, square_s.height, true, focusArea)
+                bitmap.crop(center, square_s.width, square_s.height, true, surface)
             square_s.setImageBitmap(squareBitmap)
         }
 
         square_xs.post {
             val squareBitmap =
-                bitmap.cropAlt(center.first, center.second, square_xs.width, square_xs.height, true, focusArea)
+                bitmap.crop(center, square_xs.width, square_xs.height, true, surface)
             square_xs.setImageBitmap(squareBitmap)
         }
 
         square_xxs.post {
             val squareBitmap =
-                bitmap.cropAlt(center.first, center.second, square_xxs.width, square_xxs.height, true, focusArea)
+                bitmap.crop(center, square_xxs.width, square_xxs.height, true, surface)
             square_xxs.setImageBitmap(squareBitmap)
         }
 

@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import glimpse.core.cropAlt
+import glimpse.core.crop
 import glimpse.sample.Shape.*
 import glimpse.sample.TestCropActivity.Companion.goodQuality
 import glimpse.sample.TestCropActivity.Companion.sourceKey
@@ -151,9 +151,8 @@ class TestCropFragment : Fragment() {
 
             val imageView = item.findViewById<ImageView>(R.id.ivCrop)
             imageView.setImageBitmap(
-                original.cropAlt(
-                    x,
-                    y,
+                original.crop(
+                    Pair(x, y),
                     imageView.layoutParams.width,
                     imageView.layoutParams.height,
                     optimizeZoom = zoomOptimized
