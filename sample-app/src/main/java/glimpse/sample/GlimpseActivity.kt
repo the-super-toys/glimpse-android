@@ -18,13 +18,14 @@ class GlimpseActivity : AppCompatActivity() {
         val timings = TimingLogger("PIPELINE", "imageCenterCropping")
 
         val bitmap = (original.drawable as BitmapDrawable).bitmap
-        val center = bitmap.findCenter()
+        val focusArea = mutableListOf<Float>()
+        val center = bitmap.findCenter(focusArea = focusArea)
 
         timings.addSplit("Get center from bitmap")
 
         landscape.post {
             val landscapeBitmap =
-                bitmap.cropAlt(center.first, center.second, landscape.width, landscape.height, true)
+                bitmap.cropAlt(center.first, center.second, landscape.width, landscape.height, true, focusArea)
             landscape.setImageBitmap(landscapeBitmap)
         }
 
@@ -32,7 +33,7 @@ class GlimpseActivity : AppCompatActivity() {
 
         square.post {
             val squareBitmap =
-                bitmap.cropAlt(center.first, center.second, square.width, square.height, true)
+                bitmap.cropAlt(center.first, center.second, square.width, square.height, true, focusArea)
             square.setImageBitmap(squareBitmap)
         }
 
@@ -40,11 +41,30 @@ class GlimpseActivity : AppCompatActivity() {
 
         portrait.post {
             val portraitBitmap =
-                bitmap.cropAlt(center.first, center.second, portrait.width, portrait.height, true)
+                bitmap.cropAlt(center.first, center.second, portrait.width, portrait.height, true, focusArea)
             portrait.setImageBitmap(portraitBitmap)
         }
 
         timings.addSplit("Crop portrait")
+
+        // Multi size to test zoom
+        square_s.post {
+            val squareBitmap =
+                bitmap.cropAlt(center.first, center.second, square_s.width, square_s.height, true, focusArea)
+            square_s.setImageBitmap(squareBitmap)
+        }
+
+        square_xs.post {
+            val squareBitmap =
+                bitmap.cropAlt(center.first, center.second, square_xs.width, square_xs.height, true, focusArea)
+            square_xs.setImageBitmap(squareBitmap)
+        }
+
+        square_xxs.post {
+            val squareBitmap =
+                bitmap.cropAlt(center.first, center.second, square_xxs.width, square_xxs.height, true, focusArea)
+            square_xxs.setImageBitmap(squareBitmap)
+        }
 
         // From this point, we will probably not use anything for the final product so I will not refactor it for now
         /*

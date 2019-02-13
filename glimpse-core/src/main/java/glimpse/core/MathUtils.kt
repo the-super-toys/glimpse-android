@@ -42,7 +42,11 @@ object MathUtils {
         return Pair(x / heatMap[0].size, y / heatMap.size)
     }
 
-    fun getTopZoneCenter(heatMap: Array<FloatArray>, lowerBound: Float): Pair<Float, Float> {
+    fun getTopZoneCenter(
+        heatMap: Array<FloatArray>,
+        lowerBound: Float,
+        focusArea: MutableList<Float>?
+    ): Pair<Float, Float> {
         val minValue = lowerBound * (heatMap.map { it.max() ?: 0f }.max() ?: 0f)
         val cheatSheet = Array(heatMap.size) { IntArray(heatMap[0].size) }
         val blobs = mutableListOf<BinaryBlob>()
@@ -57,7 +61,15 @@ object MathUtils {
             }
         }
 
-        return blobs.maxBy { it.size }?.let {
+        val largestBlob = blobs.maxBy { it.size }
+
+        if (largestBlob != null && focusArea != null) {
+            val focusWidth = (largestBlob.hBounds.second - largestBlob.hBounds.first) / heatMap[0].size.toFloat()
+            val focusHeight = (largestBlob.vBounds.second - largestBlob.vBounds.first) / heatMap.size.toFloat()
+            focusArea.addAll(listOf(focusWidth, focusHeight))
+        }
+
+        return largestBlob?.let {
             val centerPosition = it.getCenter()
             Pair(centerPosition.first / heatMap[0].size, centerPosition.second / heatMap.size)
         } ?: Pair(0.5f, 0.5f)

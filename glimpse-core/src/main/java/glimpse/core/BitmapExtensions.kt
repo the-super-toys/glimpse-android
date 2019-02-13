@@ -6,7 +6,14 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-fun Bitmap.cropAlt(x: Float, y: Float, targetWith: Int, targetHeight: Int, optimizeZoom: Boolean = true): Bitmap {
+fun Bitmap.cropAlt(
+    x: Float,
+    y: Float,
+    targetWith: Int,
+    targetHeight: Int,
+    optimizeZoom: Boolean = true,
+    focusArea: MutableList<Float>? = null
+): Bitmap {
     val ratioTarget = targetWith / targetHeight.toFloat()
     val ratioSource = width / height.toFloat()
 
@@ -16,18 +23,23 @@ fun Bitmap.cropAlt(x: Float, y: Float, targetWith: Int, targetHeight: Int, optim
         Pair(width.toFloat(), width / ratioTarget)
     }.let {
         // apply zoom
-        val ratioDiff = max((width * height).toFloat() / (targetWith * targetHeight).toFloat(), 1f)
         val zoom = if (optimizeZoom) {
-            when {
-                targetWith > targetHeight && width >= height -> min(2f, ratioDiff)
-                targetWith > targetHeight && width < height -> min(1.25f, ratioDiff)
-                targetWith == targetHeight -> min(2f, ratioDiff)
-                targetWith < targetHeight && width >= height -> min(1f, ratioDiff)
-                else -> min(2f, ratioDiff)
-            }
-        } else {
-            1f
-        }
+            // Max zoom until we start getting a blurry image
+            val maxResolutionZoom = max(min(it.first / targetWith, it.second / targetHeight), 1f)
+
+            // Max zoom so the final image fits the focus area
+            val maxFocusZoom = if (focusArea != null && focusArea.size == 2) {
+                // The padding amount is value above 1, so 0.2
+                // If you put a number < 1 it will have negative padding, maybe this can be set by the user?
+                val padding = 1.2f
+                val focusWidth = focusArea[0] * width * padding
+                val focusHeight = focusArea[1] * height * padding
+
+                max(min(it.first / focusWidth, it.second / focusHeight), 1f)
+            } else Float.POSITIVE_INFINITY
+
+            min(maxResolutionZoom, maxFocusZoom)
+        } else 1f
 
         Pair(floor(it.first / zoom).toInt(), floor(it.second / zoom).toInt())
     }
@@ -159,7 +171,8 @@ fun Bitmap.findCenter(
     centerMode: CenterMode = CenterMode.LARGEST,
     temperature: Float = 0.25f,
     lowerBound: Float = 0.25f,
-    useLightModel: Boolean = true
+    useLightModel: Boolean = true,
+    focusArea: MutableList<Float>? = null
 ): Pair<Float, Float> {
     // resize bitmap to make process faster and better
     val scaledBitmap = Bitmap.createScaledBitmap(this, 320, 240, false)
@@ -187,6 +200,6 @@ fun Bitmap.findCenter(
     return if (centerMode == CenterMode.AVERAGE) {
         MathUtils.getAveragedCenter(reshaped[0][0])
     } else {
-        MathUtils.getTopZoneCenter(reshaped[0][0], lowerBound = lowerBound)
+        MathUtils.getTopZoneCenter(reshaped[0][0], lowerBound = lowerBound, focusArea = focusArea)
     }
 }

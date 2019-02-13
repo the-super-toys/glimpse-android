@@ -64,4 +64,41 @@
             app:layout_constraintDimensionRatio="3:4"
             app:layout_constraintTop_toBottomOf="@id/landscape"/>
 
+    <ImageView
+            android:id="@+id/square_s"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintWidth_percent="0.3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/square"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/square"/>
+
+    <ImageView
+            android:id="@+id/square_xs"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintWidth_percent="0.2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/square"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/square_s"/>
+
+    <ImageView
+            android:id="@+id/square_xxs"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintWidth_percent="0.1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/square"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/square_xs"/>
+
+
 </android.support.constraint.ConstraintLayout>

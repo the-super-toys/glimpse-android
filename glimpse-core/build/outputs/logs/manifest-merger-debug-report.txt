@@ -1,37 +1,37 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+ADDED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
 	package
-		ADDED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:11-33
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		ADDED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:11-33
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-		ADDED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		ADDED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+		ADDED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
 	android:versionCode
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-		ADDED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		ADDED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml:1:1-35
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
 uses-sdk
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-		ADDED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		ADDED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-		ADDED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
-		INJECTED from /Users/victoralbertos/Documents/AndroidStudio/me/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		ADDED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
+		INJECTED from /Users/pablopernias/Documents/Developer/Android/projects/SaliencyTest/glimpse-core/src/main/AndroidManifest.xml
