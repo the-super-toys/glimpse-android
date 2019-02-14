@@ -6,13 +6,13 @@ import com.squareup.picasso.Transformation
 import glimpse.core.crop
 import glimpse.core.findCenter
 
-class GlimpseTransformation(target: ImageView, private val optimizeZoom: Boolean) : Transformation {
+class GlimpseTransformation(private val target: ImageView, private val optimizeZoom: Boolean) : Transformation {
     companion object {
         private val id = "glimpse.picasso.transformation"
     }
 
-    private val targetWidth by lazy { target.layoutParams.width }
-    private val targetHeight by lazy { target.layoutParams.height }
+    private val targetWidth by lazy { maxOf(target.layoutParams.width, target.width) }
+    private val targetHeight by lazy { maxOf(target.layoutParams.height, target.height) }
 
     override fun transform(source: Bitmap): Bitmap {
         if (source.width == targetWidth || source.height == targetHeight

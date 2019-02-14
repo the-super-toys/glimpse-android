@@ -1,6 +1,6 @@
 package glimpse.sample
 
-private val urlsSample by lazy {
+val urlsSample by lazy {
     listOf(
         "https://images.unsplash.com/photo-1535985664332-bd93fc895508",
         "https://images.unsplash.com/photo-1508763718304-b2ddedcc2e88",
@@ -80,8 +80,7 @@ private val urlsSample by lazy {
         "https://images.unsplash.com/photo-1503931581610-5a81a73f0ab4",
         "https://images.unsplash.com/photo-1543770544-84d8e9322fb7",
         "https://images.unsplash.com/photo-1512314889357-e157c22f938d"
-    )
+    ).map { url -> "$url?w=1000" }
 }
 
-val urlsMediumQuality by lazy { urlsSample.map { url -> "$url?w=600" } }
-val urlsHighQuality by lazy { urlsSample.map { url -> "$url?w=1000" } }
+//val urlsHighQuality by lazy { urlsSample.map { url -> "$url?w=1000" } }

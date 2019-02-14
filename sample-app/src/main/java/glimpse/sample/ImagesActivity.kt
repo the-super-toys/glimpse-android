@@ -2,17 +2,20 @@ package glimpse.sample
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.squareup.picasso.Picasso
-import glimpse.picasso.GlimpseTransformation
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import glimpse.glide.GlimpseTransformation
 import kotlinx.android.synthetic.main.activity_images.*
-import kotlinx.android.synthetic.main.item_image.view.*
+import kotlinx.android.synthetic.main.item_image_landscape.view.*
 
 class ImagesActivity : AppCompatActivity() {
+    private var layoutRes = R.layout.item_image_landscape
+    private var config: Config = Config.GlimpseZoom
+    private var spanCount = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -20,11 +23,30 @@ class ImagesActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        rvImages.apply {
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {
-                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+        setupAdapter()
+
+        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_landscape -> {
+                    spanCount = 1
+                    layoutRes = R.layout.item_image_landscape
+                    setupAdapter()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.navigation_portrait -> {
+                    spanCount = 2
+                    layoutRes = R.layout.item_image_portrait
+                    setupAdapter()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.navigation_square -> {
+                    spanCount = 3
+                    layoutRes = R.layout.item_image_square
+                    setupAdapter()
+                    return@setOnNavigationItemSelectedListener true
+                }
             }
-            adapter = ImagesAdapter(Config.CenterCrop, this@ImagesActivity)
+            false
         }
     }
 
@@ -34,34 +56,27 @@ class ImagesActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        (rvImages?.adapter as? ImagesAdapter)?.apply {
-            config = when (item.itemId) {
-                R.id.glimpse_zoom_optimized_high_quality -> Config.GlimpseZoomHighQualityImage
-                R.id.glimpse_zoom_optimized -> Config.GlimpseZoom
-                R.id.glimpse -> Config.Glimpse
-                else -> Config.CenterCrop
-            }
-
-            notifyDataSetChanged()
+        config = when (item.itemId) {
+            R.id.glimpse_zoom_optimized -> Config.GlimpseZoom
+            R.id.glimpse -> Config.Glimpse
+            else -> Config.CenterCrop
         }
+
+        setupAdapter()
 
         return super.onOptionsItemSelected(item)
     }
+
+    private fun setupAdapter() {
+        val position = (rvImages.layoutManager as? GridLayoutManager)?.findFirstVisibleItemPosition() ?: 0
+        rvImages.layoutManager = GridLayoutManager(this@ImagesActivity, spanCount)
+        rvImages.adapter = ImagesAdapter(config, layoutRes, this@ImagesActivity)
+        if (position!= 0) rvImages.scrollToPosition(position)
+    }
 }
 
-private class ImagesAdapter(var config: Config, context: Activity) :
+private class ImagesAdapter(private val config: Config, private val layoutRes: Int, context: Activity) :
     RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>() {
-
-    private val withScreen by lazy {
-        DisplayMetrics()
-            .also { context.windowManager.defaultDisplay.getMetrics(it) }
-            .run { widthPixels }
-    }
-
-    private val urlsImages
-        get() = if (config == Config.GlimpseZoomHighQualityImage) urlsHighQuality else urlsMediumQuality
-
-    private val heightRatios by lazy { urlsImages.map { listOf(1f, 0.5f, 0.25f).random() } }
 
     class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
@@ -69,43 +84,40 @@ private class ImagesAdapter(var config: Config, context: Activity) :
         parent: ViewGroup,
         viewType: Int
     ): ImagesAdapter.ImageViewHolder {
-        val root = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_image, parent, false)
+        val root = LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
         return ImageViewHolder(root)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.itemView.ivImage.layoutParams.apply {
-            width = (withScreen * 0.5).toInt()
-            height = (width * heightRatios[position]).toInt()
-        }
-
         if (config == Config.CenterCrop) {
-/*            GlideApp.with(holder.itemView.ivImage.context)
-                .load(urlsImages[position])
-                .fitCenter()
-                .into(holder.itemView.ivImage)*/
-            Picasso.get()
-                .load(urlsImages[position])
-                .resize(holder.itemView.ivImage.layoutParams.width, holder.itemView.ivImage.layoutParams.height)
+            GlideApp.with(holder.itemView.ivImage.context)
+                .load(urlsSample[position])
                 .centerCrop()
                 .into(holder.itemView.ivImage)
+/*            Picasso.get()
+                .load(urlsImages[position])
+                .fit()
+                //.resize(holder.itemView.ivImage.layoutParams.width, holder.itemView.ivImage.layoutParams.height)
+                .centerCrop()
+                .into(holder.itemView.ivImage)*/
 
         } else {
-/*            GlideApp.with(holder.itemView.ivImage.context)
-                .load(urlsImages[position])
+            GlideApp.with(holder.itemView.ivImage.context)
+                .load(urlsSample[position])
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .transform(GlimpseTransformation(optimizeZoom = config.zoom))
-                .into(holder.itemView.ivImage)*/
-            Picasso.get()
+                .into(holder.itemView.ivImage)
+/*            Picasso.get()
                 .load(urlsImages[position])
                 .transform(GlimpseTransformation(holder.itemView.ivImage, optimizeZoom = config.zoom))
-                .into(holder.itemView.ivImage)
+                .fit()
+                .into(holder.itemView.ivImage)*/
         }
     }
 
-    override fun getItemCount() = urlsImages.size
+    override fun getItemCount() = urlsSample.size
 }
 
 private enum class Config(val zoom: Boolean) {
-    GlimpseZoomHighQualityImage(true), GlimpseZoom(false), Glimpse(false), CenterCrop(false)
+    GlimpseZoom(true), Glimpse(false), CenterCrop(false)
 }

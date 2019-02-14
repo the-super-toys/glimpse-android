@@ -19,11 +19,14 @@ class GlimpseTransformation(private val optimizeZoom: Boolean) : BitmapTransform
     }
 
     override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
-        if (toTransform.width == outWidth || toTransform.height == outHeight
-            || outWidth == 0 || outWidth == 1
-            || outHeight == 0 || outHeight == 1
-        ) {
+        if (toTransform.width == outWidth && toTransform.height == outHeight) {
             return toTransform
+        }
+
+        return if (optimizeZoom) {
+            Bitmap.createScaledBitmap(toTransform, outWidth, outHeight, true)
+        } else {
+            Bitmap.createScaledBitmap(toTransform, outWidth / 10, outHeight / 10, true)
         }
 
         val (center, surface) = toTransform.findCenter()
