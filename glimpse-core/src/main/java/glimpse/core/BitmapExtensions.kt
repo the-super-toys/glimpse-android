@@ -58,7 +58,6 @@ fun Bitmap.crop(
 }
 
 fun Bitmap.findCenter(
-    centerMode: CenterMode = CenterMode.LARGEST,
     temperature: Float = 0.25f,
     lowerBound: Float = 0.25f,
     useLightModel: Boolean = true
@@ -86,9 +85,5 @@ fun Bitmap.findCenter(
     val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
 
     // get averaged center
-    return if (centerMode == CenterMode.AVERAGE) {
-        MathUtils.getAveragedFocusArea(reshaped[0][0])
-    } else {
-        MathUtils.getLargestFocusArea(reshaped[0][0], lowerBound = lowerBound)
-    }
+    return MathUtils.getLargestFocusArea(reshaped[0][0], lowerBound = lowerBound)
 }

@@ -1,9 +1,7 @@
 package glimpse.core
 
 import android.graphics.Color
-import kotlin.math.exp
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 
 object MathUtils {
     fun populateTensorFromPixels(tensor: Array<Array<Array<FloatArray>>>, pixels: IntArray) {
@@ -28,18 +26,8 @@ object MathUtils {
         return exp.map { it / sum }.toFloatArray()
     }
 
-    fun getAveragedFocusArea(heatMap: Array<FloatArray>): FocusArea {
-        var x = 0f
-        var y = 0f
-
-        heatMap.forEachIndexed { positionY, row ->
-            row.forEachIndexed { positionX, value ->
-                x += value * positionX
-                y += value * positionY
-            }
-        }
-
-        return FocusArea(Pair(x / heatMap[0].size, y / heatMap.size), Pair(0f, 0f))
+    private fun distance(pointA: Pair<Float, Float>, pointB: Pair<Float, Float>): Float {
+        return sqrt((pointA.x - pointB.x).pow(2) + (pointA.y - pointB.y).pow(2))
     }
 
     fun getLargestFocusArea(
@@ -60,36 +48,55 @@ object MathUtils {
             }
         }
 
-        val largestBlob = blobs.maxBy { it.size }
+        val largestBlob = blobs.maxBy { it.getRelevance() } ?: blobs.first()
+        if (blobs.size in 2..3) {
+            for (i in 0..blobs.lastIndex) {
+                val targetBlob = blobs[i]
+                if (targetBlob != largestBlob) {
+                    val distance = distance(
+                        Pair(largestBlob.centerX, largestBlob.centerY), Pair(targetBlob.centerX, targetBlob.centerY)
+                    )
+                    if (distance <= 2f && targetBlob.getRelevance() > largestBlob.getRelevance() * 0.75f) {
+                        largestBlob.merge(targetBlob)
+                    }
+                }
+            }
+        }
 
-        val surface = largestBlob?.let {
-            val focusWidth = (it.hBounds.second - it.hBounds.first) / heatMap[0].size.toFloat()
-            val focusHeight = (it.vBounds.second - it.vBounds.first) / heatMap.size.toFloat()
+        val surface = largestBlob.let {
+            val focusWidth = it.getBoxDims().x / heatMap[0].size.toFloat()
+            val focusHeight = it.getBoxDims().y / heatMap.size.toFloat()
             Pair(focusWidth, focusHeight)
-        } ?: Pair(0f, 0f)
+        }
 
-        val center = largestBlob?.let {
+        val center = largestBlob.let {
             val centerPosition = it.getCenter()
-            Pair(centerPosition.first / heatMap[0].size, centerPosition.second / heatMap.size)
-        } ?: Pair(0.5f, 0.5f)
+            Pair(centerPosition.x / heatMap[0].size, centerPosition.y / heatMap.size)
+        }
 
         return FocusArea(center, surface)
     }
 
     private class BinaryBlob(startingX: Int, startingY: Int) {
-        var size = 0
+        var pixelCount = 0
         var hBounds = Pair(startingX, startingX)
         var vBounds = Pair(startingY, startingY)
+        var centerX: Float = 0f
+        var centerY: Float = 0f
+        var weightSum = 0f
 
-        fun addPixel(x: Int, y: Int) {
-            size++
+        fun addPixel(x: Int, y: Int, weight: Float) {
+            pixelCount++
             hBounds = Pair(min(hBounds.first, x), max(hBounds.second, x))
             vBounds = Pair(min(vBounds.first, y), max(vBounds.second, y))
+            centerX += x * weight
+            centerY += y * weight
+            weightSum += weight
         }
 
         fun explore(j: Int, i: Int, heatMap: Array<FloatArray>, cheatSheet: Array<IntArray>, lowerBound: Float) {
             if (heatMap.getOrNull(i)?.getOrNull(j) ?: 0f > lowerBound && cheatSheet[i][j] == 0) {
-                addPixel(j, i)
+                addPixel(j, i, heatMap[i][j])
                 cheatSheet[i][j] = 1
 
                 explore(j + 1, i, heatMap, cheatSheet, lowerBound)
@@ -99,7 +106,19 @@ object MathUtils {
             }
         }
 
-        fun getCenter() = Pair((hBounds.second + hBounds.first) / 2f, (vBounds.second + vBounds.first) / 2f)
+        fun merge(targetBlob: BinaryBlob) {
+            centerX = (centerX + targetBlob.centerX) / 2f
+            centerY = (centerY + targetBlob.centerY) / 2f
+            weightSum += targetBlob.weightSum
+            pixelCount += targetBlob.pixelCount
+
+            hBounds = Pair(min(hBounds.first, targetBlob.hBounds.first), max(hBounds.second, targetBlob.hBounds.second))
+            vBounds = Pair(min(vBounds.first, targetBlob.vBounds.first), max(vBounds.second, targetBlob.vBounds.second))
+        }
+
+        fun getCenter() = Pair(centerX / weightSum, centerY / weightSum)
+        fun getBoxDims() = Pair(1f * hBounds.second - hBounds.first, 1f * vBounds.second - vBounds.first)
+        fun getRelevance() = weightSum / pixelCount
     }
 
     data class FocusArea(val center: Pair<Float, Float>, val surface: Pair<Float, Float>)
