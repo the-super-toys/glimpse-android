@@ -2,13 +2,13 @@ package glimpse.sample
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 import glimpse.core.crop
 import glimpse.sample.Shape.*
 import glimpse.sample.TestCropActivity.Companion.goodQuality

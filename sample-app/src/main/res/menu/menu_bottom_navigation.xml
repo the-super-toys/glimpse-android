@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/navigation_landscape"
+            android:icon="@drawable/ic_landscape"
+            android:title="Landscape"/>
+
+    <item
+            android:id="@+id/navigation_portrait"
+            android:icon="@drawable/ic_portrait"
+            android:title="Portrait"/>
+
+    <item
+            android:id="@+id/navigation_square"
+            android:icon="@drawable/ic_square"
+            android:title="Square"/>
+
+</menu>

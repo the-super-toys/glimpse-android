@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             android:orientation="vertical"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            app:layout_constraintTop_toTopOf="parent"
             app:title="Glimpse"
             app:titleTextColor="@color/colorWhite"
             android:background="@color/colorPrimaryDark"
@@ -14,9 +15,23 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
+            app:layout_constraintTop_toBottomOf="parent"
             android:id="@+id/rvImages"
             android:scrollbars="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-</LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
+            app:itemIconTint="@color/colorWhite"
+            app:itemTextColor="@color/colorWhite"
+            app:menu="@menu/menu_bottom_navigation"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

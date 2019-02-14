@@ -4,7 +4,7 @@
               android:orientation="vertical"
               android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             app:title="Test crop"
             app:titleTextColor="@color/colorWhite"
@@ -13,13 +13,13 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"/>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <android.support.v4.view.PagerTitleStrip
+        <androidx.viewpager.widget.PagerTitleStrip
                 android:id="@+id/pager_title_strip"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -29,6 +29,6 @@
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"/>
 
-    </android.support.v4.view.ViewPager>
+    </androidx.viewpager.widget.ViewPager>
 
 </LinearLayout>

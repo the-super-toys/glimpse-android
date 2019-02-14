@@ -2,11 +2,11 @@ package glimpse.sample
 
 import android.app.Activity
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.util.DisplayMetrics
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.squareup.picasso.Picasso
 import glimpse.picasso.GlimpseTransformation
 import kotlinx.android.synthetic.main.activity_images.*

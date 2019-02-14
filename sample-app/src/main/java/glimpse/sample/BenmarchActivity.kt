@@ -2,8 +2,8 @@ package glimpse.sample
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.TimingLogger
+import androidx.appcompat.app.AppCompatActivity
 import glimpse.core.crop
 import glimpse.core.findCenter
 import kotlinx.android.synthetic.main.activity_benmarch.*

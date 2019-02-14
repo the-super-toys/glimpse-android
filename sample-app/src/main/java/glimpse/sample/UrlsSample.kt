@@ -11,7 +11,6 @@ private val urlsSample by lazy {
         "https://images.unsplash.com/photo-1499455631844-d77c223bca19",
         "https://images.unsplash.com/photo-1541691200587-2045c1c47483",
         "https://images.unsplash.com/photo-1515412512744-6e4adc8b5e55",
-        "https://images.unsplash.com/photo-1515003197210-e0cd71810b5",
         "https://images.unsplash.com/photo-1467003909585-2f8a72700288",
         "https://images.unsplash.com/photo-1490818387583-1baba5e638af",
         "https://images.unsplash.com/photo-1478369402113-1fd53f17e8b4",
