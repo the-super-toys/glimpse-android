@@ -23,11 +23,13 @@ class GlimpseTransformation(private val optimizeZoom: Boolean) : BitmapTransform
             return toTransform
         }
 
+        /*
         return if (optimizeZoom) {
             Bitmap.createScaledBitmap(toTransform, outWidth, outHeight, true)
         } else {
             Bitmap.createScaledBitmap(toTransform, outWidth / 10, outHeight / 10, true)
         }
+        */
 
         val (center, surface) = toTransform.findCenter()
         return toTransform.crop(center, outWidth, outHeight, optimizeZoom = optimizeZoom, focusSurface = surface)

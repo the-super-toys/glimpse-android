@@ -160,9 +160,10 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
         } else {
             GlideApp.with(holder.itemView.ivImage.context)
                 .load(urlsSample[position])
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .transform(GlimpseTransformation(optimizeZoom = config.zoom))
                 .into(holder.itemView.ivImage)
+            //.into(holder.itemView.ivImage)
 /*            Picasso.get()
                 .load(urlsImages[position])
                 .transform(GlimpseTransformation(holder.itemView.ivImage, optimizeZoom = config.zoom))
