@@ -58,7 +58,7 @@ fun Bitmap.crop(
 }
 
 fun Bitmap.findCenter(
-    temperature: Float = 0.25f,
+    temperature: Float = 0.35f,
     lowerBound: Float = 0.25f,
     useLightModel: Boolean = true
 ): MathUtils.FocusArea {
