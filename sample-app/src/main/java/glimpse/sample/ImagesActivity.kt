@@ -1,5 +1,6 @@
 package glimpse.sample
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ import glimpse.sample.ImagesActivity.Companion.spanCountKey
 import kotlinx.android.synthetic.main.activity_images.*
 import kotlinx.android.synthetic.main.fragment_images.*
 import kotlinx.android.synthetic.main.item_image_landscape.view.*
+
 
 class ImagesActivity : AppCompatActivity() {
     companion object {
@@ -104,7 +106,11 @@ class ImagesFragment : Fragment() {
     }
 
     private val adapterImages by lazy {
-        ImagesAdapter(arguments!!.getInt(resLayoutKey), arguments!!.getSerializable(configKey) as Config)
+        ImagesAdapter(arguments!!.getInt(resLayoutKey), arguments!!.getSerializable(configKey) as Config) { url ->
+            val intent = Intent(activity, ImageActivity::class.java)
+            intent.putExtra(ImageActivity.imageUrlKey, url)
+            startActivity(intent)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -123,7 +129,7 @@ class ImagesFragment : Fragment() {
 }
 
 
-private class ImagesAdapter(private val layoutRes: Int, var config: Config) :
+private class ImagesAdapter(private val layoutRes: Int, var config: Config, val onUrlClick: (String) -> Unit) :
     RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>() {
 
     class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view)
@@ -137,6 +143,8 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config) :
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        holder.itemView.setOnClickListener { onUrlClick(urlsSample[position]) }
+
         if (config == Config.CenterCrop) {
             GlideApp.with(holder.itemView.ivImage.context)
                 .load(urlsSample[position])
