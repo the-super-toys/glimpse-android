@@ -48,7 +48,8 @@ object MathUtils {
             }
         }
 
-        val largestBlob = blobs.maxBy { it.getRelevance() } ?: blobs.first()
+        val largestBlob = blobs.maxBy { it.getRelevance() } ?: return FocusArea(Pair(20f, 15f), Pair(5f, 5f))
+
         if (blobs.size in 2..3) {
             for (i in 0..blobs.lastIndex) {
                 val targetBlob = blobs[i]

@@ -2,6 +2,7 @@ package glimpse.core
 
 import android.graphics.Bitmap
 import glimpse.core.ArrayUtils.generateEmptyTensor
+import org.tensorflow.lite.Interpreter
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
@@ -24,7 +25,7 @@ fun Bitmap.crop(
         // apply zoom
         val zoom = if (optimizeZoom) {
             // Max zoom until we start getting a blurry image
-            val maxResolutionZoom = max(min(dims.x / targetWith, dims.y / targetHeight), 1f)
+            val maxResolutionZoom = max(1.5f * min(dims.x / targetWith, dims.y / targetHeight), 1f)
 
             // Max zoom so the final image fits the focus area
             val maxFocusZoom = if (focusSurface != null && focusSurface.x > 0f && focusSurface.y > 0f) {
@@ -73,11 +74,17 @@ fun Bitmap.findCenter(
 
     val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
 
+    val intpr = Interpreter(rawModel, Interpreter.Options().apply {
+        setNumThreads(4)
+    })
+
     if (useLightModel) {
-        interpreterLite.run(input, output)
+        intpr.run(input, output)
     } else {
-        interpreter.run(input, output)
+        intpr.run(input, output)
     }
+
+    intpr.close()
 
     // calculate tempered softmax
     val flattened = output[0][0].flattened()
