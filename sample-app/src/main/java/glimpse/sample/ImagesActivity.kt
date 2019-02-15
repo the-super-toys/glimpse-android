@@ -1,20 +1,51 @@
 package glimpse.sample
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import glimpse.glide.GlimpseTransformation
+import glimpse.sample.ImagesActivity.Companion.configKey
+import glimpse.sample.ImagesActivity.Companion.resLayoutKey
+import glimpse.sample.ImagesActivity.Companion.spanCountKey
 import kotlinx.android.synthetic.main.activity_images.*
+import kotlinx.android.synthetic.main.fragment_images.*
 import kotlinx.android.synthetic.main.item_image_landscape.view.*
 
 class ImagesActivity : AppCompatActivity() {
-    private var layoutRes = R.layout.item_image_landscape
-    private var config: Config = Config.GlimpseZoom
-    private var spanCount = 1
+    companion object {
+        val spanCountKey = "spanCountKey"
+        val configKey = "configKey"
+        val resLayoutKey = "resLayoutKey"
+    }
+
+    private val viewPagerDataSource by lazy {
+        val initialConfig: Config = Config.GlimpseZoom
+
+        listOf(ImagesFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(configKey, initialConfig)
+                putInt(spanCountKey, 1)
+                putInt(resLayoutKey, R.layout.item_image_landscape)
+            }
+        }, ImagesFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(configKey, initialConfig)
+                putInt(spanCountKey, 2)
+                putInt(resLayoutKey, R.layout.item_image_portrait)
+            }
+        }, ImagesFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(configKey, initialConfig)
+                putInt(spanCountKey, 3)
+                putInt(resLayoutKey, R.layout.item_image_square)
+            }
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,26 +54,24 @@ class ImagesActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        setupAdapter()
+        vpImages.adapter = object : FragmentStatePagerAdapter(supportFragmentManager) {
+            override fun getItem(position: Int) = viewPagerDataSource[position]
+            override fun getCount(): Int = viewPagerDataSource.size
+            override fun getPageTitle(position: Int) = ""
+        }
 
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_landscape -> {
-                    spanCount = 1
-                    layoutRes = R.layout.item_image_landscape
-                    setupAdapter()
+                    vpImages.currentItem = 0
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.navigation_portrait -> {
-                    spanCount = 2
-                    layoutRes = R.layout.item_image_portrait
-                    setupAdapter()
+                    vpImages.currentItem = 1
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.navigation_square -> {
-                    spanCount = 3
-                    layoutRes = R.layout.item_image_square
-                    setupAdapter()
+                    vpImages.currentItem = 3
                     return@setOnNavigationItemSelectedListener true
                 }
             }
@@ -56,26 +85,45 @@ class ImagesActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        config = when (item.itemId) {
+        val newConfig = when (item.itemId) {
             R.id.glimpse_zoom_optimized -> Config.GlimpseZoom
             R.id.glimpse -> Config.Glimpse
             else -> Config.CenterCrop
         }
 
-        setupAdapter()
+        viewPagerDataSource.forEach { fragment -> fragment.updateConfig(newConfig) }
 
         return super.onOptionsItemSelected(item)
     }
+}
 
-    private fun setupAdapter() {
-        val position = (rvImages.layoutManager as? GridLayoutManager)?.findFirstVisibleItemPosition() ?: 0
-        rvImages.layoutManager = GridLayoutManager(this@ImagesActivity, spanCount)
-        rvImages.adapter = ImagesAdapter(config, layoutRes, this@ImagesActivity)
-        if (position!= 0) rvImages.scrollToPosition(position)
+
+class ImagesFragment : Fragment() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_images, container, false)
+    }
+
+    private val adapterImages by lazy {
+        ImagesAdapter(arguments!!.getInt(resLayoutKey), arguments!!.getSerializable(configKey) as Config)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        rvImages.apply {
+            layoutManager = GridLayoutManager(activity, arguments!!.getInt(spanCountKey))
+            adapter = adapterImages
+        }
+    }
+
+    fun updateConfig(config: Config) {
+        adapterImages.config = config
+        adapterImages.notifyDataSetChanged()
     }
 }
 
-private class ImagesAdapter(private val config: Config, private val layoutRes: Int, context: Activity) :
+
+private class ImagesAdapter(private val layoutRes: Int, var config: Config) :
     RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>() {
 
     class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view)
@@ -118,6 +166,7 @@ private class ImagesAdapter(private val config: Config, private val layoutRes: I
     override fun getItemCount() = urlsSample.size
 }
 
-private enum class Config(val zoom: Boolean) {
+
+enum class Config(val zoom: Boolean) {
     GlimpseZoom(true), Glimpse(false), CenterCrop(false)
 }
