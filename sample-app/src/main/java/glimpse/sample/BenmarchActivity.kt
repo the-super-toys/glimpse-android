@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.TimingLogger
 import androidx.appcompat.app.AppCompatActivity
 import glimpse.core.crop
+import glimpse.core.debugHeatMap
 import glimpse.core.findCenter
 import kotlinx.android.synthetic.main.activity_benmarch.*
 
@@ -65,38 +66,8 @@ class BenmarchActivity : AppCompatActivity() {
             square_xxs.setImageBitmap(squareBitmap)
         }
 
-        // From this point, we will probably not use anything for the final product so I will not refactor it for now
-        /*
-        val binary = false
-        softmaxed
-            .let { a ->
-                a.map {
-                    if (binary) {
-                        if (it >= (a.max() ?: 0f) * 0.25f) 255f
-                        else 0f
-                    } else {
-                        255 * it / (a.max() ?: 1f)
-                    }
-                }
-            }
-            .let { it.toFloatArray() }
-            .let { a ->
-                val newBitmap = Bitmap
-                    .createBitmap(scaledBitmap.width / 8, scaledBitmap.height / 8, Bitmap.Config.ARGB_8888)
-
-                a.forEachIndexed { index, value ->
-                    val color = if (value > 0) {
-                        Color.rgb(value.toInt(), value.toInt(), value.toInt())
-                    } else {
-                        Color.rgb(0, 0, 0)
-                    }
-                    val (pos_x, pos_y) = index % output[0][0][0].size to index / output[0][0][0].size
-                    newBitmap.setPixel(pos_x, pos_y, color)
-                }
-
-                heatmap.setImageBitmap(newBitmap)
-            }
-        */
+        val heatMapBitmap = bitmap.debugHeatMap()
+        heatmap.setImageBitmap(heatMapBitmap)
 
         print("CENTER: $center")
         timings.dumpToLog()
