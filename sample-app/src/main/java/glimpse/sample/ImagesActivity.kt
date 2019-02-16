@@ -164,6 +164,7 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.itemView.setOnClickListener { onUrlClick(urlsSample[position]) }
         setupWithGlide(holder.itemView.ivImage, position)
+        //setupWithPicasso(holder.itemView.ivImage, position)
     }
 
     override fun getItemCount() = urlsSample.size
@@ -188,14 +189,13 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
             Picasso.get()
                 .load(urlsSample[position])
                 .fit()
-                //.resize(holder.itemView.ivImage.layoutParams.width, holder.itemView.ivImage.layoutParams.height)
                 .centerCrop()
                 .into(imageView)
         } else {
             Picasso.get()
                 .load(urlsSample[position])
+                //.fit()
                 .transform(glimpse.picasso.GlimpseTransformation(imageView, optimizeZoom = config.zoom))
-                .fit()
                 .into(imageView)
         }
     }
