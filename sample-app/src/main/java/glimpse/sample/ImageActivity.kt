@@ -1,11 +1,15 @@
 package glimpse.sample
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import glimpse.core.debugHeatMap
 import glimpse.glide.GlimpseTransformation
 import kotlinx.android.synthetic.main.activity_image.*
 
@@ -23,8 +27,16 @@ class ImageActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         GlideApp.with(this)
+            .asBitmap()
             .load(url)
-            .into(original)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    original.setImageBitmap(resource)
+
+                    val scaledBitmap = Bitmap.createScaledBitmap(resource.debugHeatMap(), resource.width, resource.height, false)
+                    heatmap.setImageBitmap(scaledBitmap)
+                }
+            })
 
         updateImages(optimizeZoom = true)
     }

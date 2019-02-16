@@ -3,12 +3,14 @@ package glimpse.sample
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.squareup.picasso.Picasso
 import glimpse.glide.GlimpseTransformation
 import glimpse.sample.ImagesActivity.Companion.configKey
 import glimpse.sample.ImagesActivity.Companion.resLayoutKey
@@ -144,35 +146,43 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.itemView.setOnClickListener { onUrlClick(urlsSample[position]) }
-
-        if (config == Config.CenterCrop) {
-            GlideApp.with(holder.itemView.ivImage.context)
-                .load(urlsSample[position])
-                .centerCrop()
-                .into(holder.itemView.ivImage)
-/*            Picasso.get()
-                .load(urlsImages[position])
-                .fit()
-                //.resize(holder.itemView.ivImage.layoutParams.width, holder.itemView.ivImage.layoutParams.height)
-                .centerCrop()
-                .into(holder.itemView.ivImage)*/
-
-        } else {
-            GlideApp.with(holder.itemView.ivImage.context)
-                .load(urlsSample[position])
-                .diskCacheStrategy(DiskCacheStrategy.DATA)
-                .transform(GlimpseTransformation(optimizeZoom = config.zoom))
-                .into(holder.itemView.ivImage)
-            //.into(holder.itemView.ivImage)
-/*            Picasso.get()
-                .load(urlsImages[position])
-                .transform(GlimpseTransformation(holder.itemView.ivImage, optimizeZoom = config.zoom))
-                .fit()
-                .into(holder.itemView.ivImage)*/
-        }
+        setupWithGlide(holder.itemView.ivImage, position)
     }
 
     override fun getItemCount() = urlsSample.size
+
+    private fun setupWithGlide(imageView: ImageView, position: Int) {
+        if (config == Config.CenterCrop) {
+            GlideApp.with(imageView.context)
+                .load(urlsSample[position])
+                .centerCrop()
+                .into(imageView)
+        } else {
+            GlideApp.with(imageView.context)
+                .load(urlsSample[position])
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .transform(GlimpseTransformation(optimizeZoom = config.zoom))
+                .into(imageView)
+        }
+    }
+
+    private fun setupWithPicasso(imageView: ImageView, position: Int) {
+        if (config == Config.CenterCrop) {
+            Picasso.get()
+                .load(urlsSample[position])
+                .fit()
+                //.resize(holder.itemView.ivImage.layoutParams.width, holder.itemView.ivImage.layoutParams.height)
+                .centerCrop()
+                .into(imageView)
+        } else {
+            Picasso.get()
+                .load(urlsSample[position])
+                .transform(glimpse.picasso.GlimpseTransformation(imageView, optimizeZoom = config.zoom))
+                .fit()
+                .into(imageView)
+        }
+    }
+
 }
 
 
