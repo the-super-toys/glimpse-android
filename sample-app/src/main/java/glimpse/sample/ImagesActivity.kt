@@ -1,9 +1,9 @@
 package glimpse.sample
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.squareup.picasso.Picasso
+import com.vansuita.pickimage.bean.PickResult
+import com.vansuita.pickimage.bundle.PickSetup
+import com.vansuita.pickimage.dialog.PickImageDialog
+import com.vansuita.pickimage.listeners.IPickResult
 import glimpse.glide.GlimpseTransformation
 import glimpse.sample.ImagesActivity.Companion.configKey
 import glimpse.sample.ImagesActivity.Companion.resLayoutKey
@@ -20,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_images.*
 import kotlinx.android.synthetic.main.item_image_landscape.view.*
 
 
-class ImagesActivity : AppCompatActivity() {
+class ImagesActivity : AppCompatActivity(), IPickResult {
     companion object {
         val spanCountKey = "spanCountKey"
         val configKey = "configKey"
@@ -85,10 +89,16 @@ class ImagesActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_images, menu)
+        menu.colorizeItems(this, R.color.colorWhite)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.pick_image) {
+            PickImageDialog.build(PickSetup()).show(this)
+            return super.onOptionsItemSelected(item)
+        }
+
         val newConfig = when (item.itemId) {
             R.id.glimpse_zoom_optimized -> Config.GlimpseZoom
             R.id.glimpse -> Config.Glimpse
@@ -98,6 +108,15 @@ class ImagesActivity : AppCompatActivity() {
         viewPagerDataSource.forEach { fragment -> fragment.updateConfig(newConfig) }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPickResult(result: PickResult) {
+        if (result.error != null) {
+            Toast.makeText(this, result.error.message, Toast.LENGTH_LONG).show();
+            return
+        }
+
+        ImageActivity.launch(this, result.uri)
     }
 }
 
@@ -109,9 +128,7 @@ class ImagesFragment : Fragment() {
 
     private val adapterImages by lazy {
         ImagesAdapter(arguments!!.getInt(resLayoutKey), arguments!!.getSerializable(configKey) as Config) { url ->
-            val intent = Intent(activity, ImageActivity::class.java)
-            intent.putExtra(ImageActivity.imageUrlKey, url)
-            startActivity(intent)
+            ImageActivity.launch(activity!!, url)
         }
     }
 

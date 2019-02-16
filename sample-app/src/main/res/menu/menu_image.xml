@@ -3,6 +3,12 @@
       xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+            android:id="@+id/pick_image"
+            android:title="Pick Image"
+            android:icon="@drawable/camera"
+            app:showAsAction="ifRoom"/>
+
+    <item
             android:id="@+id/glimpse_zoom_optimized"
             android:title="Glimpse Zoom"
             app:showAsAction="never"/>
