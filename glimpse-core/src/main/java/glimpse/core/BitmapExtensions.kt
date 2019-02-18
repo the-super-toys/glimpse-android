@@ -61,7 +61,7 @@ fun Bitmap.crop(
 }
 
 fun Bitmap.debugHeatMap(
-    temperature: Float = 0.35f,
+    temperature: Float = 0.15f,
     lowerBound: Float = 0.25f
 ): Bitmap {
     val scaledBitmap = Bitmap.createScaledBitmap(this, 320, 240, false)
@@ -123,7 +123,7 @@ fun Bitmap.debugHeatMap(
 }
 
 fun Bitmap.findCenter(
-    temperature: Float = 0.35f,
+    temperature: Float = 0.15f,
     lowerBound: Float = 0.25f,
     useLightModel: Boolean = true
 ): MathUtils.FocusArea {

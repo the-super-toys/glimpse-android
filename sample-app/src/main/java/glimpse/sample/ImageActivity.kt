@@ -35,10 +35,12 @@ class ImageActivity : AppCompatActivity(), IPickResult {
         if (uri != null) {
             GlideApp.with(this)
                 .asBitmap()
+                .dontTransform()
                 .load(uri)
         } else {
             GlideApp.with(this)
                 .asBitmap()
+                .dontTransform()
                 .load(intent.getStringExtra(urlKey))
         }.into(object : SimpleTarget<Bitmap>() {
             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -81,6 +83,7 @@ class ImageActivity : AppCompatActivity(), IPickResult {
         fun glide(imageView: ImageView, optimizeZoom: Boolean = true) {
             GlideApp.with(this)
                 .load(currentBitmap)
+                .dontTransform()
                 .transform(GlimpseTransformation(optimizeZoom))
                 .into(imageView)
         }
