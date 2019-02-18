@@ -27,7 +27,7 @@ fun Bitmap.crop(
         // apply zoom
         val zoom = if (optimizeZoom) {
             // Max zoom until we start getting a blurry image
-            val maxResolutionZoom = max(1.5f * min(dims.x / targetWith, dims.y / targetHeight), 1f)
+            val maxResolutionZoom = 1.5f //max(min(dims.x / targetWith, dims.y / targetHeight), 1f)
 
             // Max zoom so the final image fits the focus area
             val maxFocusZoom = if (focusSurface != null && focusSurface.x > 0f && focusSurface.y > 0f) {
