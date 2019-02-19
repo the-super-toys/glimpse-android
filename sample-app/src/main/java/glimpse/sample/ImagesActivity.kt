@@ -15,7 +15,7 @@ import com.vansuita.pickimage.bean.PickResult
 import com.vansuita.pickimage.bundle.PickSetup
 import com.vansuita.pickimage.dialog.PickImageDialog
 import com.vansuita.pickimage.listeners.IPickResult
-import glimpse.glide.GlimpseTransformation
+import glimpse.glide.PositionedCropTransformation
 import glimpse.sample.ImagesActivity.Companion.configKey
 import glimpse.sample.ImagesActivity.Companion.resLayoutKey
 import glimpse.sample.ImagesActivity.Companion.spanCountKey
@@ -178,8 +178,8 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
         } else {
             GlideApp.with(imageView.context)
                 .load(urlsSample[position])
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .transform(GlimpseTransformation(optimizeZoom = config.zoom))
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .transform(PositionedCropTransformation())
                 .into(imageView)
         }
     }
@@ -194,14 +194,13 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
         } else {
             Picasso.get()
                 .load(urlsSample[position])
-                //.fit()
-                .transform(glimpse.picasso.GlimpseTransformation(imageView, optimizeZoom = config.zoom))
+                .fit()
+                .centerInside()
+                .transform(glimpse.picasso.GlimpseTransformation(imageView, config.zoom))
                 .into(imageView)
         }
     }
-
 }
-
 
 enum class Config(val zoom: Boolean) {
     GlimpseZoom(true), Glimpse(false), CenterCrop(false)
