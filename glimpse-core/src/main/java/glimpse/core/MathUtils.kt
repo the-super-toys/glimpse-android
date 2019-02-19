@@ -1,8 +1,8 @@
 package glimpse.core
 
 import android.graphics.Color
+import java.lang.Math.pow
 import kotlin.math.exp
-import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -107,6 +107,6 @@ object MathUtils {
         }
 
         fun getCenter() = Pair(centerX / weightSum, centerY / weightSum)
-        fun getRelevance() = weightSum / ln(pixelCount.toDouble()).toFloat()
+        fun getRelevance() = pow(weightSum.toDouble(), 2.0).toFloat() / pixelCount
     }
 }
