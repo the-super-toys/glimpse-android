@@ -25,7 +25,6 @@
         </provider>
 
         <activity android:name=".TestCropActivity"/>
-        <activity android:name=".BenmarchActivity"/>
         <activity android:name=".ImageActivity"/>
 
         <activity android:name=".ImagesActivity">
