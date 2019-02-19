@@ -6,7 +6,7 @@ import com.squareup.picasso.Transformation
 import glimpse.core.crop
 import glimpse.core.findCenter
 
-class GlimpseTransformation(private val target: ImageView, private val optimizeZoom: Boolean) : Transformation {
+class GlimpseTransformation(private val target: ImageView) : Transformation {
     companion object {
         private val id = "glimpse.picasso.transformation"
     }
@@ -21,6 +21,6 @@ class GlimpseTransformation(private val target: ImageView, private val optimizeZ
     }
 
     override fun key(): String {
-        return "$id$optimizeZoom"
+        return id
     }
 }
