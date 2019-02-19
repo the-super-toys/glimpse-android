@@ -8,7 +8,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-fun Bitmap.crop(xPercentage: Float, yPercentage: Float, outWidth: Int, outHeight: Int, recycled: Bitmap?): Bitmap {
+fun Bitmap.crop(xPercentage: Float, yPercentage: Float, outWidth: Int, outHeight: Int, recycled: Bitmap? = null): Bitmap {
     val scale: Float
     var dx = 0f
     var dy = 0f

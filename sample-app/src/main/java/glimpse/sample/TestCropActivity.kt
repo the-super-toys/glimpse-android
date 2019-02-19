@@ -1,6 +1,5 @@
 package glimpse.sample
 
-import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.*
@@ -150,18 +149,10 @@ class TestCropFragment : Fragment() {
             item.findViewById<TextView>(R.id.tvCrop).text = "$i"
 
             val imageView = item.findViewById<ImageView>(R.id.ivCrop)
-            val recycled = Bitmap.createBitmap(
-                imageView.layoutParams.width,
-                imageView.layoutParams.height, Bitmap.Config.ARGB_8888
-            )
+
 
             imageView.setImageBitmap(
-                original.crop(
-                    x, y,
-                    imageView.layoutParams.width,
-                    imageView.layoutParams.height,
-                    recycled
-                )
+                original.crop(x, y, imageView.layoutParams.width, imageView.layoutParams.height)
             )
 
             /*
