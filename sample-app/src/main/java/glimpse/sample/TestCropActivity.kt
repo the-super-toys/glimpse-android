@@ -157,9 +157,10 @@ class TestCropFragment : Fragment() {
 
             imageView.setImageBitmap(
                 original.crop(
-                    recycled, x, y,
+                    x, y,
                     imageView.layoutParams.width,
-                    imageView.layoutParams.height
+                    imageView.layoutParams.height,
+                    recycled
                 )
             )
 

@@ -26,7 +26,7 @@ class GlimpseTransformation : BitmapTransformation() {
         val config = if (toCrop.config != null) toCrop.config else Bitmap.Config.ARGB_8888
         val recycled = pool.get(outWidth, outHeight, config)
 
-        return toCrop.crop(recycled, xPercentage, yPercentage, outWidth, outHeight)
+        return toCrop.crop(xPercentage, yPercentage, outWidth, outHeight, recycled)
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {

@@ -8,7 +8,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-fun Bitmap.crop(recycled: Bitmap, xPercentage: Float, yPercentage: Float, outWidth: Int, outHeight: Int): Bitmap {
+fun Bitmap.crop(xPercentage: Float, yPercentage: Float, outWidth: Int, outHeight: Int, recycled: Bitmap?): Bitmap {
     val scale: Float
     var dx = 0f
     var dy = 0f
@@ -28,10 +28,11 @@ fun Bitmap.crop(recycled: Bitmap, xPercentage: Float, yPercentage: Float, outWid
         postTranslate(dx + 0.5f, dy + 0.5f)
     }
 
-    Canvas(recycled)
-        .drawBitmap(this, matrix, Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG))
+    val target = recycled ?: Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.ARGB_8888)
 
-    return recycled
+    Canvas(target).drawBitmap(this, matrix, Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG))
+
+    return target
 
 }
 
