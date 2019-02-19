@@ -3,31 +3,35 @@ package glimpse.core
 import android.graphics.*
 import glimpse.core.ArrayUtils.generateEmptyTensor
 import org.tensorflow.lite.Interpreter
+import kotlin.math.max
+import kotlin.math.min
 
 fun Bitmap.crop(
-    xPercentage: Float,
-    yPercentage: Float,
+    centerX: Float,
+    centerY: Float,
     outWidth: Int,
     outHeight: Int,
     recycled: Bitmap? = null
 ): Bitmap {
     val scale: Float
-    var dx = 0f
-    var dy = 0f
+    var xTranslation = 0f
+    var yTranslation = 0f
 
     if (width * outHeight > outWidth * height) {
         scale = outHeight.toFloat() / height.toFloat()
-        dx = outWidth - width * scale
-        dx *= xPercentage
+
+        xTranslation = -width * scale * centerX + outWidth / 2f
+        xTranslation = max(min(xTranslation, 0f), outWidth - width * scale)
     } else {
         scale = outWidth.toFloat() / width.toFloat()
-        dy = outHeight - height * scale
-        dy *= yPercentage
+
+        yTranslation = -height * scale * centerY + outHeight / 2f
+        yTranslation = max(min(yTranslation, 0f), outHeight - height * scale)
     }
 
     val matrix = Matrix().apply {
         setScale(scale, scale)
-        postTranslate(dx + 0.5f, dy + 0.5f)
+        postTranslate(xTranslation, yTranslation)
     }
 
     val target = recycled ?: Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.ARGB_8888)
