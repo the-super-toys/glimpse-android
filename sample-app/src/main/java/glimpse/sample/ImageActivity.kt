@@ -67,6 +67,11 @@ class ImageActivity : AppCompatActivity(), IPickResult {
             else -> Config.CenterCrop
         }
 
+        supportActionBar?.title = when (item.itemId) {
+            R.id.glimpse -> Config.Glimpse.toString()
+            else -> Config.CenterCrop.toString()
+        }
+
         setupImages()
 
         return super.onOptionsItemSelected(item)

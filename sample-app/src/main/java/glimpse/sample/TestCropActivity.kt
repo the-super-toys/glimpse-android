@@ -150,10 +150,7 @@ class TestCropFragment : Fragment() {
 
             val imageView = item.findViewById<ImageView>(R.id.ivCrop)
 
-
-            imageView.setImageBitmap(
-                original.crop(x, y, imageView.layoutParams.width, imageView.layoutParams.height)
-            )
+            imageView.setImageBitmap(original.crop(x, y, imageView.layoutParams.width, imageView.layoutParams.height))
 
             /*
             Picasso.get().load(R.drawable.grid_numbers_landscape)

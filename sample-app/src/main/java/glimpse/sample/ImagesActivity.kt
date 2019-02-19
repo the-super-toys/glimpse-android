@@ -99,6 +99,11 @@ class ImagesActivity : AppCompatActivity(), IPickResult {
             return super.onOptionsItemSelected(item)
         }
 
+        supportActionBar?.title = when (item.itemId) {
+            R.id.glimpse -> Config.Glimpse.toString()
+            else -> Config.CenterCrop.toString()
+        }
+
         val newConfig = when (item.itemId) {
             R.id.glimpse -> Config.Glimpse
             else -> Config.CenterCrop
