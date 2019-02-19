@@ -9,13 +9,12 @@
             app:showAsAction="ifRoom"/>
 
     <item
-            android:id="@+id/glimpse_zoom_optimized"
-            android:title="Glimpse Zoom"
-            app:showAsAction="never"/>
-
-    <item
             android:id="@+id/glimpse"
             android:title="Glimpse"
             app:showAsAction="never"/>
 
+    <item
+            android:id="@+id/center_crop"
+            android:title="Vanilla center crop"
+            app:showAsAction="never"/>
 </menu>

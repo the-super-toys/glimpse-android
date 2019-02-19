@@ -32,7 +32,7 @@ class ImagesActivity : AppCompatActivity(), IPickResult {
     }
 
     private val viewPagerDataSource by lazy {
-        val initialConfig: Config = Config.GlimpseZoom
+        val initialConfig: Config = Config.Glimpse
 
         listOf(ImagesFragment().apply {
             arguments = Bundle().apply {
@@ -88,7 +88,7 @@ class ImagesActivity : AppCompatActivity(), IPickResult {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_images, menu)
+        menuInflater.inflate(R.menu.menu_image, menu)
         menu.colorizeItems(this, R.color.colorWhite)
         return true
     }
@@ -100,7 +100,6 @@ class ImagesActivity : AppCompatActivity(), IPickResult {
         }
 
         val newConfig = when (item.itemId) {
-            R.id.glimpse_zoom_optimized -> Config.GlimpseZoom
             R.id.glimpse -> Config.Glimpse
             else -> Config.CenterCrop
         }
@@ -173,6 +172,7 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
         if (config == Config.CenterCrop) {
             GlideApp.with(imageView.context)
                 .load(urlsSample[position])
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .centerCrop()
                 .into(imageView)
         } else {
@@ -196,12 +196,8 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
                 .load(urlsSample[position])
                 .fit()
                 .centerInside()
-                .transform(glimpse.picasso.GlimpseTransformation(imageView, config.zoom))
+                //.transform(glimpse.picasso.GlimpseTransformation(imageView, config.zoom))
                 .into(imageView)
         }
     }
-}
-
-enum class Config(val zoom: Boolean) {
-    GlimpseZoom(true), Glimpse(false), CenterCrop(false)
 }

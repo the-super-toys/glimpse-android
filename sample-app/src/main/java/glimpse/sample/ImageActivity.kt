@@ -21,7 +21,7 @@ import glimpse.glide.GlimpseTransformation
 import kotlinx.android.synthetic.main.activity_image.*
 
 class ImageActivity : AppCompatActivity(), IPickResult {
-    private var optimizeZoom = true
+    private var config: Config = Config.Glimpse
     private lateinit var currentBitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,10 @@ class ImageActivity : AppCompatActivity(), IPickResult {
             return super.onOptionsItemSelected(item)
         }
 
-        optimizeZoom = R.id.glimpse_zoom_optimized == item.itemId
+        config = when (item.itemId) {
+            R.id.glimpse -> Config.Glimpse
+            else -> Config.CenterCrop
+        }
 
         setupImages()
 
@@ -71,6 +74,7 @@ class ImageActivity : AppCompatActivity(), IPickResult {
 
     private fun setupImages() {
         original.setImageBitmap(currentBitmap)
+
         heatmap.setImageBitmap(
             Bitmap.createScaledBitmap(
                 currentBitmap.debugHeatMap(),
@@ -80,20 +84,26 @@ class ImageActivity : AppCompatActivity(), IPickResult {
             )
         )
 
-        fun glide(imageView: ImageView, optimizeZoom: Boolean = true) {
-            GlideApp.with(this)
-                .load(currentBitmap)
-                .dontTransform()
-                .transform(GlimpseTransformation())
-                .into(imageView)
+        fun glide(imageView: ImageView) {
+            if (config == Config.CenterCrop) {
+                GlideApp.with(this)
+                    .load(currentBitmap)
+                    .centerCrop()
+                    .into(imageView)
+            } else {
+                GlideApp.with(this)
+                    .load(currentBitmap)
+                    .transform(GlimpseTransformation())
+                    .into(imageView)
+            }
         }
 
-        glide(landscape, optimizeZoom)
-        glide(square, optimizeZoom)
-        glide(portrait, optimizeZoom)
-        glide(square_s, optimizeZoom)
-        glide(square_xs, optimizeZoom)
-        glide(square_xxs, optimizeZoom)
+        glide(landscape)
+        glide(square)
+        glide(portrait)
+        glide(square_s)
+        glide(square_xs)
+        glide(square_xxs)
     }
 
     override fun onPickResult(result: PickResult) {

@@ -24,11 +24,11 @@
                     android:resource="@xml/picker_provider_paths" />
         </provider>
 
-        <activity android:name=".ImagesActivity"/>
+        <activity android:name=".TestCropActivity"/>
         <activity android:name=".BenmarchActivity"/>
         <activity android:name=".ImageActivity"/>
 
-        <activity android:name=".TestCropActivity">
+        <activity android:name=".ImagesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
