@@ -20,8 +20,7 @@ class GlimpseTransformation : BitmapTransformation() {
             return toCrop
         }
 
-        val (center, _) = toCrop.findCenter()
-        val (xPercentage, yPercentage) = center
+        val (xPercentage, yPercentage) = toCrop.findCenter()
 
         val config = if (toCrop.config != null) toCrop.config else Bitmap.Config.ARGB_8888
         val recycled = pool.get(outWidth, outHeight, config)

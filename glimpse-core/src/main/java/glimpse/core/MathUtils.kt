@@ -33,7 +33,7 @@ object MathUtils {
     fun getLargestFocusArea(
         heatMap: Array<FloatArray>,
         lowerBound: Float
-    ): FocusArea {
+    ): Pair<Float, Float> {
         val minValue = lowerBound * (heatMap.map { it.max() ?: 0f }.max() ?: 0f)
         val cheatSheet = Array(heatMap.size) { IntArray(heatMap[0].size) }
         val blobs = mutableListOf<BinaryBlob>()
@@ -48,8 +48,9 @@ object MathUtils {
             }
         }
 
-        val largestBlob = blobs.maxBy { it.getRelevance() } ?: return FocusArea(Pair(20f, 15f), Pair(5f, 5f))
+        val largestBlob = blobs.maxBy { it.getRelevance() } ?: return Pair(heatMap[0].size / 2f, heatMap.size / 2f)
 
+        // Group blobs if they are close enough
         if (blobs.size in 2..3) {
             for (i in 0..blobs.lastIndex) {
                 val targetBlob = blobs[i]
@@ -57,25 +58,17 @@ object MathUtils {
                     val distance = distance(
                         Pair(largestBlob.centerX, largestBlob.centerY), Pair(targetBlob.centerX, targetBlob.centerY)
                     )
-                    if (distance <= 2f && targetBlob.getRelevance() > largestBlob.getRelevance() * 0.75f) {
+                    if (distance <= 3f && targetBlob.getRelevance() > largestBlob.getRelevance() * 0.75f) {
                         largestBlob.merge(targetBlob)
                     }
                 }
             }
         }
 
-        val surface = largestBlob.let {
-            val focusWidth = it.getBoxDims().x / heatMap[0].size.toFloat()
-            val focusHeight = it.getBoxDims().y / heatMap.size.toFloat()
-            Pair(focusWidth, focusHeight)
-        }
-
-        val center = largestBlob.let {
+        return largestBlob.let {
             val centerPosition = it.getCenter()
             Pair(centerPosition.x / heatMap[0].size, centerPosition.y / heatMap.size)
         }
-
-        return FocusArea(center, surface)
     }
 
     private class BinaryBlob(startingX: Int, startingY: Int) {

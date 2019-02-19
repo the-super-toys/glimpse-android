@@ -15,8 +15,8 @@ class GlimpseTransformation(private val target: ImageView, private val optimizeZ
     private val targetHeight by lazy { maxOf(target.layoutParams.height, target.height) }
 
     override fun transform(source: Bitmap): Bitmap {
-        val (center, surface) = source.findCenter()
-        return source.crop(center, targetWidth, targetHeight, optimizeZoom = optimizeZoom, focusSurface = surface)
+        val (centerX, centerY) = source.findCenter()
+        return source.crop(centerX, centerY, targetWidth, targetHeight)
             .also { source.recycle() }
     }
 

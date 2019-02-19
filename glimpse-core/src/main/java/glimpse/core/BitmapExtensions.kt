@@ -1,14 +1,16 @@
 package glimpse.core
 
 import android.graphics.*
-import android.util.TimingLogger
 import glimpse.core.ArrayUtils.generateEmptyTensor
 import org.tensorflow.lite.Interpreter
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
 
-fun Bitmap.crop(xPercentage: Float, yPercentage: Float, outWidth: Int, outHeight: Int, recycled: Bitmap? = null): Bitmap {
+fun Bitmap.crop(
+    xPercentage: Float,
+    yPercentage: Float,
+    outWidth: Int,
+    outHeight: Int,
+    recycled: Bitmap? = null
+): Bitmap {
     val scale: Float
     var dx = 0f
     var dy = 0f
@@ -33,58 +35,6 @@ fun Bitmap.crop(xPercentage: Float, yPercentage: Float, outWidth: Int, outHeight
     Canvas(target).drawBitmap(this, matrix, Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG))
 
     return target
-
-}
-
-fun Bitmap.crop(
-    center: Pair<Float, Float>,
-    targetWith: Int,
-    targetHeight: Int,
-    optimizeZoom: Boolean = true,
-    focusSurface: Pair<Float, Float>? = null
-): Bitmap {
-    val ratioTarget = targetWith / targetHeight.toFloat()
-    val ratioSource = width / height.toFloat()
-
-    val (newWidth, newHeight) = if (ratioTarget < ratioSource) {
-        Pair(height * ratioTarget, height.toFloat())
-    } else {
-        Pair(width.toFloat(), width / ratioTarget)
-    }.let { dims ->
-        // apply zoom
-        val zoom = if (optimizeZoom) {
-            // Max zoom until we start getting a blurry image
-            val maxResolutionZoom = 1.5f //max(min(dims.x / targetWith, dims.y / targetHeight), 1f)
-
-            // Max zoom so the final image fits the focus area
-            val maxFocusZoom = if (focusSurface != null && focusSurface.x > 0f && focusSurface.y > 0f) {
-                // The padding amount is value above 1, so 0.2
-                // If you put a number < 1 it will have negative padding, maybe this can be set by the user?
-                val padding = 1.2f
-                val focusWidth = focusSurface.x * width * padding
-                val focusHeight = focusSurface.y * height * padding
-
-                max(min(dims.x / focusWidth, dims.y / focusHeight), 1f)
-            } else Float.POSITIVE_INFINITY
-
-            min(maxResolutionZoom, maxFocusZoom)
-        } else 1f
-
-        Pair(floor(dims.x / zoom).toInt(), floor(dims.y / zoom).toInt())
-    }
-
-    val centerX = min(max(center.x * width, newWidth / 2f), width - newWidth / 2f)
-    val centerY = min(max(center.y * height, newHeight / 2f), height - newHeight / 2f)
-
-    val croppedBitmap = Bitmap.createBitmap(
-        this,
-        (centerX - newWidth / 2).toInt(),
-        (centerY - newHeight / 2).toInt(),
-        newWidth,
-        newHeight
-    )
-
-    return Bitmap.createScaledBitmap(croppedBitmap, targetWith, targetHeight, true)
 }
 
 fun Bitmap.debugHeatMap(
@@ -131,7 +81,7 @@ fun Bitmap.debugHeatMap(
 
             a.forEachIndexed { index, (value, focused) ->
                 val (pos_x, pos_y) = index % output[0][0][0].size to index / output[0][0][0].size
-                val (focus_x, focus_y) = focusArea.center.x * output[0][0][0].size to focusArea.center.y * output[0][0].size
+                val (focus_x, focus_y) = focusArea.x * output[0][0][0].size to focusArea.y * output[0][0].size
                 val color = if (focus_x.toInt() == pos_x && focus_y.toInt() == pos_y) {
                     Color.rgb(value.toInt(), value.toInt() / 2, value.toInt() / 2)
                 } else if (focused == 1) {
@@ -151,9 +101,8 @@ fun Bitmap.debugHeatMap(
 
 fun Bitmap.findCenter(
     temperature: Float = 0.15f,
-    lowerBound: Float = 0.25f,
-    useLightModel: Boolean = true
-): MathUtils.FocusArea {
+    lowerBound: Float = 0.25f
+): Pair<Float, Float> {
     // resize bitmap to make process faster and better
     val scaledBitmap = Bitmap.createScaledBitmap(this, 320, 240, false)
     val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
@@ -165,26 +114,11 @@ fun Bitmap.findCenter(
 
     val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
 
-    val timings = TimingLogger("TimingLogger", "TF Pipeline")
-
     val intpr = Interpreter(rawModel, Interpreter.Options().apply {
         setNumThreads(1)
     })
-
-    timings.addSplit("Setup Interpreter")
-
-    if (useLightModel) {
-        intpr.run(input, output)
-    } else {
-        intpr.run(input, output)
-    }
-
-    timings.addSplit("Inference")
-
+    intpr.run(input, output)
     intpr.close()
-
-    timings.addSplit("Close Interpreter")
-    timings.dumpToLog()
 
     // calculate tempered softmax
     val flattened = output[0][0].flattened()
