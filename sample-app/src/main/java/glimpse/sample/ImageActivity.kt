@@ -84,7 +84,7 @@ class ImageActivity : AppCompatActivity(), IPickResult {
             GlideApp.with(this)
                 .load(currentBitmap)
                 .dontTransform()
-                .transform(GlimpseTransformation(optimizeZoom))
+                .transform(GlimpseTransformation())
                 .into(imageView)
         }
 

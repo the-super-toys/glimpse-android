@@ -1,5 +1,6 @@
 package glimpse.sample
 
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.*
@@ -14,7 +15,6 @@ import glimpse.sample.Shape.*
 import glimpse.sample.TestCropActivity.Companion.goodQuality
 import glimpse.sample.TestCropActivity.Companion.sourceKey
 import glimpse.sample.TestCropActivity.Companion.targetKey
-import glimpse.sample.TestCropActivity.Companion.zoomOptimized
 import kotlinx.android.synthetic.main.fragment_crop_landscape.*
 import kotlinx.android.synthetic.main.test_activity_crop.*
 
@@ -150,12 +150,16 @@ class TestCropFragment : Fragment() {
             item.findViewById<TextView>(R.id.tvCrop).text = "$i"
 
             val imageView = item.findViewById<ImageView>(R.id.ivCrop)
+            val recycled = Bitmap.createBitmap(
+                imageView.layoutParams.width,
+                imageView.layoutParams.height, Bitmap.Config.ARGB_8888
+            )
+
             imageView.setImageBitmap(
                 original.crop(
-                    Pair(x, y),
+                    recycled, x, y,
                     imageView.layoutParams.width,
-                    imageView.layoutParams.height,
-                    optimizeZoom = zoomOptimized
+                    imageView.layoutParams.height
                 )
             )
 

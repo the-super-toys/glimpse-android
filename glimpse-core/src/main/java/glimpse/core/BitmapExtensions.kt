@@ -1,13 +1,39 @@
 package glimpse.core
 
-import android.graphics.Bitmap
-import android.graphics.Color
+import android.graphics.*
 import android.util.TimingLogger
 import glimpse.core.ArrayUtils.generateEmptyTensor
 import org.tensorflow.lite.Interpreter
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
+
+fun Bitmap.crop(recycled: Bitmap, xPercentage: Float, yPercentage: Float, outWidth: Int, outHeight: Int): Bitmap {
+    val scale: Float
+    var dx = 0f
+    var dy = 0f
+
+    if (width * outHeight > outWidth * height) {
+        scale = outHeight.toFloat() / height.toFloat()
+        dx = outWidth - width * scale
+        dx *= xPercentage
+    } else {
+        scale = outWidth.toFloat() / width.toFloat()
+        dy = outHeight - height * scale
+        dy *= yPercentage
+    }
+
+    val matrix = Matrix().apply {
+        setScale(scale, scale)
+        postTranslate(dx + 0.5f, dy + 0.5f)
+    }
+
+    Canvas(recycled)
+        .drawBitmap(this, matrix, Paint(Paint.DITHER_FLAG or Paint.FILTER_BITMAP_FLAG))
+
+    return recycled
+
+}
 
 fun Bitmap.crop(
     center: Pair<Float, Float>,

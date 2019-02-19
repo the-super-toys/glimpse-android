@@ -15,7 +15,7 @@ import com.vansuita.pickimage.bean.PickResult
 import com.vansuita.pickimage.bundle.PickSetup
 import com.vansuita.pickimage.dialog.PickImageDialog
 import com.vansuita.pickimage.listeners.IPickResult
-import glimpse.glide.PositionedCropTransformation
+import glimpse.glide.GlimpseTransformation
 import glimpse.sample.ImagesActivity.Companion.configKey
 import glimpse.sample.ImagesActivity.Companion.resLayoutKey
 import glimpse.sample.ImagesActivity.Companion.spanCountKey
@@ -179,7 +179,7 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
             GlideApp.with(imageView.context)
                 .load(urlsSample[position])
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
-                .transform(PositionedCropTransformation())
+                .transform(GlimpseTransformation())
                 .into(imageView)
         }
     }

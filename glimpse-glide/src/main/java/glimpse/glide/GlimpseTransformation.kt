@@ -1,42 +1,35 @@
 package glimpse.glide
 
 import android.graphics.Bitmap
-import android.os.Build.ID
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
-import com.bumptech.glide.util.Util
 import glimpse.core.crop
 import glimpse.core.findCenter
-import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.security.MessageDigest
 
-class GlimpseTransformation(private val optimizeZoom: Boolean) : BitmapTransformation() {
 
+class GlimpseTransformation : BitmapTransformation() {
     companion object {
         private val id = "glimpse.glide.transformation"
         private val idBytes = id.toByteArray(Charset.forName("UTF-8"))
     }
 
-    override fun transform(pool: BitmapPool, toTransform: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
-        if (toTransform.width == outWidth && toTransform.height == outHeight) {
-            return toTransform
+    override fun transform(pool: BitmapPool, toCrop: Bitmap, outWidth: Int, outHeight: Int): Bitmap {
+        if (toCrop.width == outWidth && toCrop.height == outHeight) {
+            return toCrop
         }
 
-        val (center, surface) = toTransform.findCenter()
-        return toTransform.crop(center, outWidth, outHeight, optimizeZoom = optimizeZoom, focusSurface = surface)
-    }
+        val (center, _) = toCrop.findCenter()
+        val (xPercentage, yPercentage) = center
 
-    override fun equals(other: Any?): Boolean = if (other is GlimpseTransformation) {
-        optimizeZoom == other.optimizeZoom
-    } else {
-        false
-    }
+        val config = if (toCrop.config != null) toCrop.config else Bitmap.Config.ARGB_8888
+        val recycled = pool.get(outWidth, outHeight, config)
 
-    override fun hashCode(): Int = Util.hashCode(ID.hashCode(), Util.hashCode(optimizeZoom))
+        return toCrop.crop(recycled, xPercentage, yPercentage, outWidth, outHeight)
+    }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
         messageDigest.update(idBytes)
-        messageDigest.update(ByteBuffer.allocate(4).putInt(if (optimizeZoom) 1 else 0).array())
     }
 }
