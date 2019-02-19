@@ -200,7 +200,7 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
                 .load(urlsSample[position])
                 .fit()
                 .centerInside()
-                //.transform(glimpse.picasso.GlimpseTransformation(imageView, config.zoom))
+                .transform(glimpse.picasso.GlimpseTransformation(imageView))
                 .into(imageView)
         }
     }
