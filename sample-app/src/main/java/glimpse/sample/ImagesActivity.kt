@@ -172,13 +172,12 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
         if (config == Config.CenterCrop) {
             GlideApp.with(imageView.context)
                 .load(urlsSample[position])
-                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .centerCrop()
                 .into(imageView)
         } else {
             GlideApp.with(imageView.context)
                 .load(urlsSample[position])
-                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .transform(GlimpseTransformation())
                 .into(imageView)
         }
