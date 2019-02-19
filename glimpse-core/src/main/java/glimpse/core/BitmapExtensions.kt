@@ -87,7 +87,7 @@ fun Bitmap.debugHeatMap(
                 val (pos_x, pos_y) = index % output[0][0][0].size to index / output[0][0][0].size
                 val (focus_x, focus_y) = focusArea.x * output[0][0][0].size to focusArea.y * output[0][0].size
                 val color = if (focus_x.toInt() == pos_x && focus_y.toInt() == pos_y) {
-                    Color.rgb(value.toInt(), value.toInt() / 2, value.toInt() / 2)
+                    Color.rgb(255, 0, 0)
                 } else if (focused == 1) {
                     Color.rgb(value.toInt() / 2, value.toInt(), value.toInt() / 2)
                 } else {

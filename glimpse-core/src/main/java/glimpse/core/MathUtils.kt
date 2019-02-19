@@ -1,7 +1,9 @@
 package glimpse.core
 
 import android.graphics.Color
-import kotlin.math.*
+import kotlin.math.exp
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 object MathUtils {
     fun populateTensorFromPixels(tensor: Array<Array<Array<FloatArray>>>, pixels: IntArray) {
@@ -41,7 +43,7 @@ object MathUtils {
         heatMap.forEachIndexed { i, row ->
             row.forEachIndexed { j, value ->
                 if (value >= minValue && cheatSheet[i][j] == 0) {
-                    val blob = BinaryBlob(j, i)
+                    val blob = BinaryBlob()
                     blob.explore(j, i, heatMap, cheatSheet, minValue)
                     blobs.add(blob)
                 }
@@ -56,7 +58,7 @@ object MathUtils {
                 val targetBlob = blobs[i]
                 if (targetBlob != largestBlob) {
                     val distance = distance(
-                        Pair(largestBlob.centerX, largestBlob.centerY), Pair(targetBlob.centerX, targetBlob.centerY)
+                        largestBlob.getCenter(), targetBlob.getCenter()
                     )
                     if (distance <= 3f && targetBlob.getRelevance() > largestBlob.getRelevance() * 0.75f) {
                         largestBlob.merge(targetBlob)
@@ -71,18 +73,14 @@ object MathUtils {
         }
     }
 
-    private class BinaryBlob(startingX: Int, startingY: Int) {
-        var pixelCount = 0
-        var hBounds = Pair(startingX, startingX)
-        var vBounds = Pair(startingY, startingY)
-        var centerX: Float = 0f
-        var centerY: Float = 0f
-        var weightSum = 0f
+    private class BinaryBlob {
+        private var pixelCount = 0
+        private var centerX: Float = 0f
+        private var centerY: Float = 0f
+        private var weightSum = 0f
 
         fun addPixel(x: Int, y: Int, weight: Float) {
             pixelCount++
-            hBounds = Pair(min(hBounds.first, x), max(hBounds.second, x))
-            vBounds = Pair(min(vBounds.first, y), max(vBounds.second, y))
             centerX += x * weight
             centerY += y * weight
             weightSum += weight
@@ -101,19 +99,13 @@ object MathUtils {
         }
 
         fun merge(targetBlob: BinaryBlob) {
-            centerX = (centerX + targetBlob.centerX) / 2f
-            centerY = (centerY + targetBlob.centerY) / 2f
+            centerX += targetBlob.centerX
+            centerY += targetBlob.centerY
             weightSum += targetBlob.weightSum
             pixelCount += targetBlob.pixelCount
-
-            hBounds = Pair(min(hBounds.first, targetBlob.hBounds.first), max(hBounds.second, targetBlob.hBounds.second))
-            vBounds = Pair(min(vBounds.first, targetBlob.vBounds.first), max(vBounds.second, targetBlob.vBounds.second))
         }
 
         fun getCenter() = Pair(centerX / weightSum, centerY / weightSum)
-        fun getBoxDims() = Pair(1f * hBounds.second - hBounds.first, 1f * vBounds.second - vBounds.first)
         fun getRelevance() = weightSum / pixelCount
     }
-
-    data class FocusArea(val center: Pair<Float, Float>, val surface: Pair<Float, Float>)
 }
