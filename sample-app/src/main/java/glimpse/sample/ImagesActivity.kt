@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.squareup.picasso.Picasso
 import com.vansuita.pickimage.bean.PickResult
 import com.vansuita.pickimage.bundle.PickSetup
 import com.vansuita.pickimage.dialog.PickImageDialog
@@ -168,7 +167,6 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.itemView.setOnClickListener { onUrlClick(urlsSample[position]) }
         setupWithGlide(holder.itemView.ivImage, position)
-        //setupWithPicasso(holder.itemView.ivImage, position)
     }
 
     override fun getItemCount() = urlsSample.size
@@ -184,23 +182,6 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
                 .load(urlsSample[position])
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .transform(GlimpseTransformation())
-                .into(imageView)
-        }
-    }
-
-    private fun setupWithPicasso(imageView: ImageView, position: Int) {
-        if (config == Config.CenterCrop) {
-            Picasso.get()
-                .load(urlsSample[position])
-                .fit()
-                .centerCrop()
-                .into(imageView)
-        } else {
-            Picasso.get()
-                .load(urlsSample[position])
-                .fit()
-                .centerInside()
-                .transform(glimpse.picasso.GlimpseTransformation(imageView))
                 .into(imageView)
         }
     }
