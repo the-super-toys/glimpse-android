@@ -6,7 +6,7 @@ import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-object MathUtils {
+internal object MathUtils {
     fun populateTensorFromPixels(tensor: Array<Array<Array<FloatArray>>>, pixels: IntArray) {
         if (pixels.size != tensor[0][0].size * tensor[0][0][0].size) {
             throw ArrayIndexOutOfBoundsException("The tensor and the pixels array have incompatible shapes")
