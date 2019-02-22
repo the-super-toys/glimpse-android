@@ -1,15 +1,15 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.github.dcendents.android-maven'
+group = glimpse_group
+version = glimpse_version
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion sdk_version
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-
+        minSdkVersion min_sdk_version
+        targetSdkVersion sdk_version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
@@ -26,4 +26,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+}
+
+repositories {
+    mavenCentral()
 }
