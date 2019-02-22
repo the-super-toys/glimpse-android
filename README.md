@@ -1,9 +1,10 @@
-# WIP
-
 # Glimpse
-A content-aware cropping library for Android
 
-Give the right first impression with just a glimpse. Instead of center cropping images blindly leverage Glimpse's eye to catch the right region.
+A content-aware cropping library for Android.
+
+Give the right first impression with just a glimpse! Instead of center cropping images blindly, leverage Glimpse's eye to catch the right spot.
+
+
 
 ## Setup
 Add to top level *gradle.build* file
@@ -18,16 +19,16 @@ allprojects {
 Add to app module *gradle.build* file
 ```gradle
 dependencies {
-	implementation 'com.github.thesupertoys:glimpse-core:0.0.1'
+	implementation 'com.github.the-super-toys:glimpse-core:0.0.1'
 	
 	//Glide extensions for glimpse
-	implementation 'com.github.thesupertoys:glimpse-glide:0.0.1'
+	implementation 'com.github.the-super-toys:glimpse-glide:0.0.1'
 }
 ```
 
 ## Usage
 
-### Init Glimpse in your app base class
+### Init Glimpse in your Android app
 
 ```kotlin
 class YourApp : Application() {
@@ -42,7 +43,7 @@ class YourApp : Application() {
 First compute image's focal points by calling `Bitmap.findCenter` extension function.
 
 ```kotlin
-val original = (ivOriginal.drawable as BitmapDrawable).bitmap
+val original = (imageView.drawable as BitmapDrawable).bitmap
 val (x, y) = original.findCenter()
 ```
 
@@ -53,24 +54,39 @@ val cropped = original.crop(x, y, imageView.layoutParams.width, imageView.layout
 imageView.setImageBitmap(cropped)
 ```
 
-### Use Glimpse leveraging Glide extension 
+### Use Glimpse with Glide extension 
+If you are using [Glide](https://github.com/bumptech/glide) for image loading you can just add `GlimpseTransformation` to `GlideRequest` builder:
+
+ 
+```kotlin
+GlideApp.with(context)
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .transform(GlimpseTransformation())
+                .into(imageView)
+```
+
+It is recommended to set `diskCacheStrategy(DiskCacheStrategy.RESOURCE)` to cache the cropped bitmap by Glimpse, otherwise focal points will be calculated every time the image is displayed.
 
 ### What about other image loaders such as Picasso and Fresco?
-We tried to ship Glimpse with Picasso and Fresco extensions but we were not able to find the right way to do it.
-Explain it more     
+
+We tried to ship Glimpse with both Picasso and Fresco extensions but we were not able to find the right api.
+
+We opened an [issue on Picasso repository](https://github.com/square/picasso/issues/2067) and a [labeled Fresco question on Stack Overflow](https://stackoverflow.com/questions/54773198/fresco-how-to-use-scaletypes-focuscrop-based-on-bitmap-content)  asking for guidance, but sadly we did not find much support. If you know how to assemble Glimpse cropping functionality to either lib without disrupting their original pipeline, please open an issue to review together the proposal. We really want to offer support for all the popular loading image libraries!  
+  
 
 ## Sample app
-`:sample_app` module showcase Glimpse usage by making use of Glide extensions.
-
-## Disclaimer
-
-### Runtime cost
-Is glimpse ready for production? It may be, let us know! 
-
-Ideally you should not use Glimpse to crop the same image over and over. Even if you use Glide extension which caches the output transformation, the underlying calculation 
-will be performed in every android client. Thus, if possible send to your cloud solution the x and y focal points of the calculated crop alongside the image when user uploads content.
-
-We timed the crop calculation on an OnePlus 6 and in average it takes 60 mm. We'll try to improve it but at the time being that's the mark. 
+`:sample-app` module showcase Glimpse usage by making use of Glide extensions. The application is also published on Google Play. 
 
 
-### Compile cost
+## Is Glimpse ready for production? 
+
+Actually, it depends. Ideally you should not use Glimpse to crop the same image over and over. Even if you use Glide extension which caches the output transformation, the underlying calculation 
+will be performed in every android client. Thus, if possible, send to your cloud solution the x and y focal points of the calculated crop alongside the image when user uploads content.
+
+We timed the crop calculation on an OnePlus 6 and in average it takes 60 milliseconds. Depending on the device and your specific use case Glimpse may or may not be ready for production. In any case we encourage you to provide feedback to help us make Glimpse a mature library.
+
+
+## How much increase APK's size?
+
+If you're already using [TensorFlow lite](https://www.tensorflow.org/lite) in your app, adding Glimpse costs only the size of the model, which is 148 KB. But chances are that you are not using it, so you have to take into account also the size of [TensorFlow lite](https://www.tensorflow.org/lite/overview#tensorflow_lite_highlights), which is about 300 KB.
