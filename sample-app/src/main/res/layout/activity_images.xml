@@ -9,7 +9,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="Glimpse"
             app:titleTextColor="@color/colorWhite"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"/>

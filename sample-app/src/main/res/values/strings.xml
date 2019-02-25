@@ -1,3 +1,3 @@
-<resources>
-    <string name="app_name">SaliencyTest</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string tools:override="true" name="app_name">Glimpse</string>
 </resources>
