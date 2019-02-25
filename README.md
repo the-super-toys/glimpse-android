@@ -86,7 +86,7 @@ We opened an [issue on Picasso repository](https://github.com/square/picasso/iss
   
 
 ## Sample app
-`:sample-app` module showcase Glimpse usage by making use of Glide extensions. The application is also published on Google Play. 
+`:sample-app` module showcase Glimpse usage by making use of Glide extensions. The application is also published on [Google Play](https://play.google.com/store/apps/details?id=glimpse.sample). 
 
 
 ## Is Glimpse ready for production? 
