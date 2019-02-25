@@ -100,3 +100,10 @@ We timed the crop calculation on an OnePlus 6 and in average it takes 60 millise
 ## How much increase APK's size?
 
 If you're already using [TensorFlow lite](https://www.tensorflow.org/lite) in your app, adding Glimpse costs only the size of the model, which is 148 KB. But chances are that you are not using it, so you have to take into account also the size of [TensorFlow lite](https://www.tensorflow.org/lite/overview#tensorflow_lite_highlights), which is about 300 KB.
+
+
+## Let's go DEEPER (The Deep Learning Model)
+
+If you want to know how Glimpse works in a more deeper lever, take a look at [this repository](https://github.com/the-super-toys/glimpse-models), where you can see the architecture and implementation of the Deep Learning model used by Glimpse. We explain how everything works in a much more technical level, and with all details, so you can reproduce it pn your own, and improve it if you want.  
+
+But if you do, don't hesitate to submit a Pull Request to that repository so we can keep improving Glimpse!!
