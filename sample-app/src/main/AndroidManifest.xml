@@ -3,7 +3,7 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="glimpse.sample">
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
             android:allowBackup="true"
