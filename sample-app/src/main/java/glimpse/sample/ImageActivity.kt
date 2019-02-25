@@ -58,7 +58,11 @@ class ImageActivity : AppCompatActivity(), IPickResult {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.pick_image) {
-            PickImageDialog.build(PickSetup()).show(this)
+            PickImageDialog.build(
+                PickSetup()
+                    .setCameraIcon(R.mipmap.camera_colored)
+                    .setGalleryIcon(R.mipmap.gallery_colored)
+            ).show(this)
             return super.onOptionsItemSelected(item)
         }
 
