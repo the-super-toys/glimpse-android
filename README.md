@@ -4,7 +4,7 @@ A content-aware cropping library for Android.
 
 Give the right first impression with just a glimpse! Instead of center cropping images blindly, leverage Glimpse's eye to catch the right spot.
 
-
+![image](doc_resources/glimpse_banner.png)
 
 ## Setup
 Add to top level *gradle.build* file
