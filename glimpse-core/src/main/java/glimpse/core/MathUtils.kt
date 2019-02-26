@@ -23,8 +23,8 @@ internal object MathUtils {
         }
     }
 
-    fun softMax(logits: FloatArray): FloatArray {
-        val exp = logits.map { exp(it) }
+    fun softMax(logits: FloatArray, temperature: Float = 1f): FloatArray {
+        val exp = logits.map { exp(it / temperature) }
         val sum = exp.sum()
         return exp.map { it / sum }.toFloatArray()
     }

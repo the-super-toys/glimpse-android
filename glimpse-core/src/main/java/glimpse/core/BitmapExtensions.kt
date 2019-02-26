@@ -65,7 +65,7 @@ fun Bitmap.debugHeatMap(
 
     // calculate tempered softmax
     val flattened = output[0][0].flattened()
-    val softmaxed = MathUtils.softMax(flattened).temper(temperature)
+    val softmaxed = MathUtils.softMax(flattened, temperature = temperature)
     val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
 
     // get averaged center
@@ -126,7 +126,7 @@ fun Bitmap.findCenter(
 
     // calculate tempered softmax
     val flattened = output[0][0].flattened()
-    val softmaxed = MathUtils.softMax(flattened).temper(temperature)
+    val softmaxed = MathUtils.softMax(flattened, temperature = temperature)
     val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
 
     // get averaged center

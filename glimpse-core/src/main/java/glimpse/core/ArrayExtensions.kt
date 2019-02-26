@@ -1,8 +1,6 @@
 package glimpse.core
 
 import glimpse.core.ArrayUtils.generateEmptyTensor
-import kotlin.math.exp
-import kotlin.math.ln
 
 internal fun Array<FloatArray>.flattened(): FloatArray {
     var flattened = floatArrayOf()
@@ -23,15 +21,6 @@ internal fun FloatArray.reshape(rows: Int, cols: Int): Array<Array<Array<FloatAr
     }
     return newShaped
 }
-
-internal fun FloatArray.temper(temperature: Float) = this.map {
-    ln(it) / temperature
-}.map {
-    exp(it)
-}.let { a ->
-    val sum = a.sum()
-    a.map { it / sum }
-}.toFloatArray()
 
 internal val Pair<Float, Float>.x
     get() = this.first
