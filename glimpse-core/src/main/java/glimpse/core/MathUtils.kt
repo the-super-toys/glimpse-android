@@ -8,17 +8,17 @@ import kotlin.math.sqrt
 
 internal object MathUtils {
     fun populateTensorFromPixels(tensor: Array<Array<Array<FloatArray>>>, pixels: IntArray) {
-        if (pixels.size != tensor[0][0].size * tensor[0][0][0].size) {
+        if (pixels.size != tensor[0].size * tensor[0][0].size) {
             throw ArrayIndexOutOfBoundsException("The tensor and the pixels array have incompatible shapes")
         }
 
-        for (i in 0 until tensor[0][0].size) {
-            for (j in 0 until tensor[0][0][0].size) {
-                val pixel = pixels[j + i * tensor[0][0][0].size]
+        for (i in 0 until tensor[0].size) {
+            for (j in 0 until tensor[0][0].size) {
+                val pixel = pixels[j + i * tensor[0][0].size]
 
-                tensor[0][0][i][j] = Color.red(pixel) / 255f
-                tensor[0][1][i][j] = Color.green(pixel) / 255f
-                tensor[0][2][i][j] = Color.blue(pixel) / 255f
+                tensor[0][i][j][0] = Color.red(pixel) / 255f
+                tensor[0][i][j][1] = Color.green(pixel) / 255f
+                tensor[0][i][j][2] = Color.blue(pixel) / 255f
             }
         }
     }

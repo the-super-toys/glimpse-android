@@ -10,6 +10,14 @@ internal fun Array<FloatArray>.flattened(): FloatArray {
     return flattened
 }
 
+internal fun Array<Array<FloatArray>>.flattened(): FloatArray {
+    var flattened = floatArrayOf()
+    this.forEach { row ->
+        flattened += row.map { it[0] }
+    }
+    return flattened
+}
+
 internal fun FloatArray.reshape(rows: Int, cols: Int): Array<Array<Array<FloatArray>>> {
     val newShaped = generateEmptyTensor(1, 1, rows, cols)
     for (i in 0 until rows) {

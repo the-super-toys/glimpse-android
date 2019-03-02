@@ -3,6 +3,7 @@
 package glimpse.core
 
 import android.graphics.*
+import android.util.TimingLogger
 import glimpse.core.ArrayUtils.generateEmptyTensor
 import org.tensorflow.lite.Interpreter
 import java.nio.ByteBuffer
@@ -70,7 +71,7 @@ fun Bitmap.debugHeatMap(
     intpreter.runThreadSafe(inputBuffer, output)
 
     // calculate tempered softmax
-    val flattened = output[0][0].flattened()
+    val flattened = output[0].flattened()
     val softmaxed = MathUtils.softMax(flattened, temperature = temperature)
     val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
 
@@ -114,7 +115,6 @@ fun Bitmap.debugHeatMap(
 }
 
 
-
 @Synchronized
 fun Interpreter.runThreadSafe(inputBuffer: ByteBuffer, output: Array<Array<Array<FloatArray>>>) {
     run(inputBuffer, output)
@@ -126,10 +126,12 @@ fun Bitmap.findCenter(
     temperature: Float = 0.2f,
     lowerBound: Float = 0.25f
 ): Pair<Float, Float> {
+    val timings = TimingLogger("GlimpseDebug", "predict")
     // resize bitmap to make process faster and better
     val scaledBitmap = Bitmap.createScaledBitmap(this, 176, 176, false)
     val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
     scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
+    timings.addSplit("scale input")
 
     // setup tensors
     val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
@@ -144,9 +146,12 @@ fun Bitmap.findCenter(
     intpreter.runThreadSafe(inputBuffer, output)
 
     // calculate tempered softmax
-    val flattened = output[0][0].flattened()
+    val flattened = output[0].flattened()
     val softmaxed = MathUtils.softMax(flattened, temperature = temperature)
     val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
+    timings.addSplit("post-process")
+
+    timings.dumpToLog()
 
     // get averaged center
     return MathUtils.getLargestFocusArea(reshaped[0][0], lowerBound = lowerBound)
