@@ -96,7 +96,7 @@ If you're using Java you can take a look at this [file](https://github.com/the-s
 Actually, it depends. Ideally you should not use Glimpse to crop the same image over and over. Even if you use Glide extension which caches the output transformation, the underlying calculation 
 will be performed in every android client. Thus, if possible, send to your cloud solution the x and y focal points of the calculated crop alongside the image when user uploads content.
 
-We timed the crop calculation on an OnePlus 6 and in average it takes 60 milliseconds. Depending on the device and your specific use case Glimpse may or may not be ready for production. In any case we encourage you to provide feedback to help us make Glimpse a mature library.
+We timed the crop calculation on an OnePlus 6 and in average it takes 30 milliseconds. Depending on the device and your specific use case Glimpse may or may not be ready for production. In any case we encourage you to provide feedback to help us make Glimpse a mature library.
 
 
 ## How much increase APK's size?
