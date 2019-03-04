@@ -51,7 +51,7 @@ fun Bitmap.debugHeatMap(
     temperature: Float = 0.2f,
     lowerBound: Float = 0.25f
 ): Bitmap {
-    val scaledBitmap = Bitmap.createScaledBitmap(this, 320, 240, false)
+    val scaledBitmap = Bitmap.createScaledBitmap(this, 176, 176, false)
     val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
     scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
@@ -109,7 +109,7 @@ fun Bitmap.debugHeatMap(
 
             newBitmap
         }.let {
-            Bitmap.createScaledBitmap(it, 320, 240, false)
+            Bitmap.createScaledBitmap(it, 176, 176, false)
         }
 }
 
@@ -119,7 +119,7 @@ fun Bitmap.findCenter(
     lowerBound: Float = 0.25f
 ): Pair<Float, Float> {
     // resize bitmap to make process faster and better
-    val scaledBitmap = Bitmap.createScaledBitmap(this, 320, 240, false)
+    val scaledBitmap = Bitmap.createScaledBitmap(this, 176, 176, false)
     val pixels = IntArray(scaledBitmap.width * scaledBitmap.height)
     scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
