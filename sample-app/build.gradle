@@ -41,4 +41,8 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
 
     implementation 'com.github.jrvansuita:PickImage:2.2.4'
+
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.1.1'
+    androidTestImplementation 'com.google.truth:truth:0.42'
 }
