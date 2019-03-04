@@ -27,10 +27,10 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.the-super-toys.glimpse-android:glimpse-core:0.0.1'
+    implementation 'com.github.the-super-toys.glimpse-android:glimpse-core:0.0.2'
     
     //only required for glide extensions
-    implementation 'com.github.the-super-toys.glimpse-android:glimpse-glide:0.0.1'
+    implementation 'com.github.the-super-toys.glimpse-android:glimpse-glide:0.0.2'
     
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
 }
@@ -84,6 +84,8 @@ We tried to ship Glimpse with both Picasso and Fresco extensions but we were not
 
 We opened an [issue on Picasso repository](https://github.com/square/picasso/issues/2067) and a [labeled Fresco question on Stack Overflow](https://stackoverflow.com/questions/54773198/fresco-how-to-use-scaletypes-focuscrop-based-on-bitmap-content)  asking for guidance, but sadly we did not find much support. If you know how to assemble Glimpse cropping functionality to either lib without disrupting their original pipeline, please open an issue to review together the proposal. We really want to offer support for all the popular loading image libraries!  
   
+### Java callers
+If you're using Java you can take a look at this [file](https://github.com/the-super-toys/glimpse-android/blob/master/sample-app/src/main/java/glimpse/sample/TestingApiFromJava.java) to see how Glimpse api looks for Java callers. 
 
 ## Sample app
 `:sample-app` module showcase Glimpse usage by making use of Glide extensions. The application is also published on [Google Play](https://play.google.com/store/apps/details?id=glimpse.sample). 
