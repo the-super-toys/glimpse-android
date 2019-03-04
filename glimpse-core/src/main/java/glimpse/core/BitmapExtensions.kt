@@ -1,3 +1,5 @@
+@file:JvmName("BitmapUtils")
+
 package glimpse.core
 
 import android.graphics.*
@@ -6,6 +8,8 @@ import org.tensorflow.lite.Interpreter
 import kotlin.math.max
 import kotlin.math.min
 
+
+@JvmOverloads
 fun Bitmap.crop(
     centerX: Float,
     centerY: Float,
@@ -41,6 +45,7 @@ fun Bitmap.crop(
     return target
 }
 
+@JvmOverloads
 fun Bitmap.debugHeatMap(
     temperature: Float = 0.2f,
     lowerBound: Float = 0.25f
@@ -103,6 +108,7 @@ fun Bitmap.debugHeatMap(
         }
 }
 
+@JvmOverloads
 fun Bitmap.findCenter(
     temperature: Float = 0.2f,
     lowerBound: Float = 0.25f
