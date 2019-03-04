@@ -5,6 +5,7 @@ package glimpse.core
 import android.graphics.*
 import glimpse.core.ArrayUtils.generateEmptyTensor
 import org.tensorflow.lite.Interpreter
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -86,10 +87,14 @@ fun Bitmap.debugHeatMap(
         }
         .let { a ->
             val newBitmap = Bitmap
-                .createBitmap(scaledBitmap.width / 8, scaledBitmap.height / 8, Bitmap.Config.ARGB_8888)
+                .createBitmap(
+                    floor(scaledBitmap.width / 8f).toInt(),
+                    floor(scaledBitmap.height / 8f).toInt(),
+                    Bitmap.Config.ARGB_8888
+                )
 
             a.forEachIndexed { index, (value, focused) ->
-                val (pos_x, pos_y) = index % output[0][0][0].size to index / output[0][0][0].size
+                val (pos_x, pos_y) = index % output[0][0][0].size to floor(1.0 * index / output[0][0][0].size).toInt()
                 val (focus_x, focus_y) = focusArea.x * output[0][0][0].size to focusArea.y * output[0][0].size
                 val color = if (focus_x.toInt() == pos_x && focus_y.toInt() == pos_y) {
                     Color.rgb(255, 0, 0)
