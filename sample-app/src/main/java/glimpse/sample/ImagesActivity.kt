@@ -1,5 +1,7 @@
 package glimpse.sample
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
@@ -21,6 +23,7 @@ import glimpse.sample.ImagesActivity.Companion.spanCountKey
 import kotlinx.android.synthetic.main.activity_images.*
 import kotlinx.android.synthetic.main.fragment_images.*
 import kotlinx.android.synthetic.main.item_image_landscape.view.*
+import java.util.*
 
 
 class ImagesActivity : AppCompatActivity(), IPickResult {
@@ -160,6 +163,8 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
 
     class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
+    private val random = Random()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -184,6 +189,7 @@ private class ImagesAdapter(private val layoutRes: Int, var config: Config, val 
         } else {
             GlideApp.with(imageView.context)
                 .load(urlsSample[position])
+                .placeholder(ColorDrawable(Color.argb(50, random.nextInt(128) + 128, random.nextInt(128) + 128, random.nextInt(128) + 128)))
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .transform(GlimpseTransformation())
                 .into(imageView)
