@@ -1,3 +1,10 @@
+Version 0.0.3
+----------------------------
+
+Reduce model input size
+Use ByteBuffer for the model input
+
+
 Version 0.0.2
 ----------------------------
 
