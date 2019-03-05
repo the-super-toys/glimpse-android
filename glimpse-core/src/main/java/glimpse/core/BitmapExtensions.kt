@@ -5,6 +5,8 @@ package glimpse.core
 import android.graphics.*
 import glimpse.core.ArrayUtils.generateEmptyTensor
 import org.tensorflow.lite.Interpreter
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
@@ -56,17 +58,18 @@ fun Bitmap.debugHeatMap(
     scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
     // setup tensors
-    val input = generateEmptyTensor(1, 3, scaledBitmap.height, scaledBitmap.width)
-    MathUtils.populateTensorFromPixels(input, pixels)
-
     val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
 
+    val inputBuffer: ByteBuffer = ByteBuffer.allocateDirect(1 * 176 * 176 * 3 * 4).apply {
+        order(ByteOrder.nativeOrder())
+    }
+    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 16 and 0xFF) / 255f) }
+    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 8 and 0xFF) / 255f) }
+    pixels.forEach { pixel -> inputBuffer.putFloat((pixel and 0xFF) / 255f) }
     val intpr = Interpreter(rawModel, Interpreter.Options().apply {
         setNumThreads(1)
     })
-
-    intpr.run(input, output)
-
+    intpr.run(inputBuffer, output)
     intpr.close()
 
     // calculate tempered softmax
@@ -124,15 +127,18 @@ fun Bitmap.findCenter(
     scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
     // setup tensors
-    val input = generateEmptyTensor(1, 3, scaledBitmap.height, scaledBitmap.width)
-    MathUtils.populateTensorFromPixels(input, pixels)
-
     val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
 
+    val inputBuffer: ByteBuffer = ByteBuffer.allocateDirect(1 * 176 * 176 * 3 * 4).apply {
+        order(ByteOrder.nativeOrder())
+    }
+    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 16 and 0xFF) / 255f) }
+    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 8 and 0xFF) / 255f) }
+    pixels.forEach { pixel -> inputBuffer.putFloat((pixel and 0xFF) / 255f) }
     val intpr = Interpreter(rawModel, Interpreter.Options().apply {
         setNumThreads(1)
     })
-    intpr.run(input, output)
+    intpr.run(inputBuffer, output)
     intpr.close()
 
     // calculate tempered softmax
