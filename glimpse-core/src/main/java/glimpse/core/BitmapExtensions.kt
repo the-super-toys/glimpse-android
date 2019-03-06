@@ -116,6 +116,18 @@ fun Bitmap.debugHeatMap(
         }
 }
 
+private val intpreter by lazy {
+    Interpreter(rawModel, Interpreter.Options().apply {
+        setNumThreads(1)
+    })
+}
+
+@Synchronized
+fun Interpreter.runThreadSafe(inputBuffer: ByteBuffer, output: Array<Array<Array<FloatArray>>>) {
+    run(inputBuffer, output)
+}
+
+
 @JvmOverloads
 fun Bitmap.findCenter(
     temperature: Float = 0.2f,
@@ -135,11 +147,8 @@ fun Bitmap.findCenter(
     pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 16 and 0xFF) / 255f) }
     pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 8 and 0xFF) / 255f) }
     pixels.forEach { pixel -> inputBuffer.putFloat((pixel and 0xFF) / 255f) }
-    val intpr = Interpreter(rawModel, Interpreter.Options().apply {
-        setNumThreads(1)
-    })
-    intpr.run(inputBuffer, output)
-    intpr.close()
+
+    intpreter.runThreadSafe(inputBuffer, output)
 
     // calculate tempered softmax
     val flattened = output[0][0].flattened()
@@ -149,3 +158,4 @@ fun Bitmap.findCenter(
     // get averaged center
     return MathUtils.getLargestFocusArea(reshaped[0][0], lowerBound = lowerBound)
 }
+
