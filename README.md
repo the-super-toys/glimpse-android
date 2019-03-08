@@ -27,10 +27,10 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.the-super-toys.glimpse-android:glimpse-core:0.0.3'
+    implementation 'com.github.the-super-toys.glimpse-android:glimpse-core:0.0.4'
     
     //only required for glide extensions
-    implementation 'com.github.the-super-toys.glimpse-android:glimpse-glide:0.0.3'
+    implementation 'com.github.the-super-toys.glimpse-android:glimpse-glide:0.0.4'
     
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
 }
