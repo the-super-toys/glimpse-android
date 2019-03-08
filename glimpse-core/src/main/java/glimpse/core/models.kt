@@ -1,3 +1,9 @@
 package glimpse.core
 
-internal val rawModel by lazy { IOUtils.loadModel(Glimpse.client.applicationContext, "model.tflite") }
+import org.tensorflow.lite.Interpreter
+
+private val rawModel by lazy { IOUtils.loadModel(Glimpse.client.applicationContext, "model.tflite") }
+
+internal val intpreter by lazy {
+    Interpreter(rawModel, Interpreter.Options())
+}
