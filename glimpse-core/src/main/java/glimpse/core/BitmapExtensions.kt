@@ -59,21 +59,23 @@ fun Bitmap.debugHeatMap(
     scaledBitmap.getPixels(pixels, 0, scaledBitmap.width, 0, 0, scaledBitmap.width, scaledBitmap.height)
 
     // setup tensors
-    val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
+    val output = generateEmptyTensor(1, scaledBitmap.height / 8, scaledBitmap.width / 8, 1)
 
     val inputBuffer: ByteBuffer = ByteBuffer.allocateDirect(1 * 176 * 176 * 3 * 4).apply {
         order(ByteOrder.nativeOrder())
     }
-    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 16 and 0xFF) / 255f) }
-    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 8 and 0xFF) / 255f) }
-    pixels.forEach { pixel -> inputBuffer.putFloat((pixel and 0xFF) / 255f) }
+    pixels.forEach { pixel ->
+        inputBuffer.putFloat((pixel shr 16 and 0xFF) / 255f)
+        inputBuffer.putFloat((pixel shr 8 and 0xFF) / 255f)
+        inputBuffer.putFloat((pixel and 0xFF) / 255f)
+    }
 
     intpreter.runThreadSafe(inputBuffer, output)
 
     // calculate tempered softmax
     val flattened = output[0].flattened()
     val softmaxed = MathUtils.softMax(flattened, temperature = temperature)
-    val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
+    val reshaped = softmaxed.reshape(output[0].size, output[0][0].size)
 
     // get averaged center
     val focusArea = MathUtils.getLargestFocusArea(reshaped[0][0], lowerBound = lowerBound)
@@ -95,8 +97,8 @@ fun Bitmap.debugHeatMap(
                 )
 
             a.forEachIndexed { index, (value, focused) ->
-                val (pos_x, pos_y) = index % output[0][0][0].size to floor(1.0 * index / output[0][0][0].size).toInt()
-                val (focus_x, focus_y) = focusArea.x * output[0][0][0].size to focusArea.y * output[0][0].size
+                val (pos_x, pos_y) = index % output[0][0].size to floor(1.0 * index / output[0][0].size).toInt()
+                val (focus_x, focus_y) = focusArea.x * output[0][0].size to focusArea.y * output[0].size
                 val color = if (focus_x.toInt() == pos_x && focus_y.toInt() == pos_y) {
                     Color.rgb(255, 0, 0)
                 } else if (focused == 1) {
@@ -134,21 +136,26 @@ fun Bitmap.findCenter(
     timings.addSplit("scale input")
 
     // setup tensors
-    val output = generateEmptyTensor(1, 1, scaledBitmap.height / 8, scaledBitmap.width / 8)
+    val output = generateEmptyTensor(1, scaledBitmap.height / 8, scaledBitmap.width / 8, 1)
 
     val inputBuffer: ByteBuffer = ByteBuffer.allocateDirect(1 * 176 * 176 * 3 * 4).apply {
         order(ByteOrder.nativeOrder())
     }
-    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 16 and 0xFF) / 255f) }
-    pixels.forEach { pixel -> inputBuffer.putFloat((pixel shr 8 and 0xFF) / 255f) }
-    pixels.forEach { pixel -> inputBuffer.putFloat((pixel and 0xFF) / 255f) }
+    pixels.forEach { pixel ->
+        inputBuffer.putFloat((pixel shr 16 and 0xFF) / 255f)
+        inputBuffer.putFloat((pixel shr 8 and 0xFF) / 255f)
+        inputBuffer.putFloat((pixel and 0xFF) / 255f)
+    }
+    timings.addSplit("prepare input")
 
     intpreter.runThreadSafe(inputBuffer, output)
+
+    timings.addSplit("inference")
 
     // calculate tempered softmax
     val flattened = output[0].flattened()
     val softmaxed = MathUtils.softMax(flattened, temperature = temperature)
-    val reshaped = softmaxed.reshape(output[0][0].size, output[0][0][0].size)
+    val reshaped = softmaxed.reshape(output[0].size, output[0][0].size)
     timings.addSplit("post-process")
 
     timings.dumpToLog()
