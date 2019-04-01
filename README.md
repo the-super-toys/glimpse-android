@@ -106,6 +106,6 @@ If you're already using [TensorFlow lite](https://www.tensorflow.org/lite) in yo
 
 ## Let's go DEEPER (The Deep Learning Model)
 
-If you want to know how Glimpse works in a more deeper lever, take a look at [this repository](https://github.com/the-super-toys/glimpse-models), where you can see the architecture and implementation of the Deep Learning model used by Glimpse. We explain how everything works in a much more technical level, and with all details, so you can reproduce it pn your own, and improve it if you want.  
+If you want to know how Glimpse works in a more deeper lever, take a look at [this repository](https://github.com/the-super-toys/glimpse-models), where you can see the architecture and implementation of the Deep Learning model used by Glimpse. We explain how everything works in a much more technical level, and with all details, so you can reproduce it on your own, and improve it if you want.  
 
 But if you do, don't hesitate to submit a Pull Request to that repository so we can keep improving Glimpse!!
