@@ -84,6 +84,21 @@ GlideApp.with(context)
 
 It is recommended to set `diskCacheStrategy(DiskCacheStrategy.RESOURCE)` to cache the cropped bitmap by Glimpse, otherwise focal points will be calculated every time the image is displayed.
 
+
+### Use Glimpse with Coil extension 
+If you are using [Coil](https://github.com/coil-kt/coil) for image loading you can just add `GlimpseTransformation` to Coil's `LoadRequestBuilder` builder:
+
+ 
+```kotlin
+imageView.load(url) {
+    crossfade(true)
+    placeholder(R.drawable.image)
+    transformations(GlimpseTransformation())
+}
+
+
+```
+
 ### What about other image loaders such as Picasso and Fresco?
 
 We tried to ship Glimpse with both Picasso and Fresco extensions but we were not able to find the right api.
