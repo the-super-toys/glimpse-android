@@ -17,12 +17,18 @@ allprojects {
 ```
 
 Add to app module *gradle.build* file
+TensorFlow lite recommends most developers omit the x86, x86_64, and arm32 ABIs. This can be achieved with the following Gradle configuration, which specifically includes only armeabi-v7a and arm64-v8a, which should cover most modern Android devices.
 ```gradle
 
 android {
     aaptOptions {
         noCompress "tflite"
         noCompress "lite"
+    }
+    defaultConfig {
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 }
 
