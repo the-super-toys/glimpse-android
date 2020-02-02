@@ -17,12 +17,18 @@ allprojects {
 ```
 
 Add to app module *gradle.build* file
+TensorFlow lite recommends most developers omit the x86, x86_64, and arm32 ABIs. This can be achieved with the following Gradle configuration, which specifically includes only armeabi-v7a and arm64-v8a, which should cover most modern Android devices.
 ```gradle
 
 android {
     aaptOptions {
         noCompress "tflite"
         noCompress "lite"
+    }
+    defaultConfig {
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 }
 
@@ -77,6 +83,21 @@ GlideApp.with(context)
 ```
 
 It is recommended to set `diskCacheStrategy(DiskCacheStrategy.RESOURCE)` to cache the cropped bitmap by Glimpse, otherwise focal points will be calculated every time the image is displayed.
+
+
+### Use Glimpse with Coil extension 
+If you are using [Coil](https://github.com/coil-kt/coil) for image loading you can just add `GlimpseTransformation` to Coil's `LoadRequestBuilder` builder:
+
+ 
+```kotlin
+imageView.load(url) {
+    crossfade(true)
+    placeholder(R.drawable.image)
+    transformations(GlimpseTransformation())
+}
+
+
+```
 
 ### What about other image loaders such as Picasso and Fresco?
 
